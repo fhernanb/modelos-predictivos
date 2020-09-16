@@ -26,10 +26,10 @@ library(FNN)
 mod <- knn.reg(train=x_train, test=x_test, y=y_train, 
                k=5, algorithm="kd_tree")
 
-# Para ver la clase del objeto mod
+# Para ver la clase del objeto
 class(mod)
 
-# Para ver los elementos dentro de mod
+# Para ver los elementos dentro del objeto
 names(mod)
 
 # Para explorar $pred
@@ -44,3 +44,36 @@ cor(y_test, y_hat)
 # Para ver al relacion
 plot(x=y_test, y=y_hat, las=1)
 abline(a=0, b=1, col="blue3")
+
+
+# Usando el paquete kknn --------------------------------------------------
+library(kknn)
+
+fit2 <- train.kknn(Price ~ Weight + MPG.city,
+                   data=Cars93[indices, ],
+                   distance=2,
+                   kernel="optimal",
+                   scale=TRUE)
+
+# Para ver la clase del objeto
+class(fit2)
+
+# Para ver los elementos dentro del objeto
+names(fit2)
+
+# Para explorar las estimaciones
+y_hat <- predict(fit2, newdata=Cars93[-indices, ])
+
+# Para ver el ECM
+mean((y_test - y_hat)^2)
+
+# Para ver la correlacion
+cor(y_test, y_hat)
+
+# Para ver al relacion
+plot(x=y_test, y=y_hat, las=1)
+abline(a=0, b=1, col="blue3")
+
+
+
+
