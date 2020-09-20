@@ -15,7 +15,6 @@ datos <- gen_dat(n=n)
 
 # Explorando los datos
 with(datos, plot(x=x, y=y, las=1))
-points(x=0.2, y=1, pch=19, col="red")
 
 # Ajustando el modelo lm
 mod1 <- lm(y ~ x, data=datos)
