@@ -18,7 +18,7 @@ mse <- function(y, y_hat) mean((y - y_hat)^2)
 # svm lineal --------------------------------------------------------------
 library(e1071)
 
-# Para ajustar el modelo
+# Para ajustar el modelo con los hiper-parametros por defecto
 mod_lin <- svm(y ~ x, type="eps-regression", kernel="linear",
                cost=1, epsilon=0.1)
 
@@ -36,9 +36,10 @@ points(x=x, y=y_hat_lin, type="l", lwd=2, col="red")
 
 # svm polinomial ----------------------------------------------------------
 
-# Para ajustar el modelo
+# Para ajustar el modelo con los hiper-parametros por defecto
 mod_pol <- svm(y ~ x, type="eps-regression", kernel="polynomial",
-               cost=1, epsilon=0.1)
+               cost=1, epsilon=0.1,
+               degree=3, gamma=1, coef.0=0)
 
 # To obtain y_hat
 y_hat_pol <- predict(mod_pol)
@@ -54,9 +55,10 @@ points(x=x, y=y_hat_pol, type="l", lwd=2, col="blue")
 
 # svm radial --------------------------------------------------------------
 
-# Para ajustar el modelo
+# Para ajustar el modelo con los hiper-parametros por defecto
 mod_rad <- svm(y ~ x, type="eps-regression", kernel="radial",
-               cost=1, epsilon=0.1)
+               cost=1, epsilon=0.1,
+               gamma=1)
 
 # To obtain y_hat
 y_hat_rad <- predict(mod_rad)

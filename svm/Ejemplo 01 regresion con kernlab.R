@@ -36,9 +36,10 @@ points(x=x, y=y_hat_lin, type="l", lwd=2, col="red")
 
 # svm polinomial ----------------------------------------------------------
 
-# Para ajustar el modelo
-mod_pol <- svm(y ~ x, type="eps-regression", kernel="polynomial",
-               cost=1, epsilon=0.1)
+# Para ajustar el modelo con los hiper-parametros por defecto
+mod_pol <- ksvm(y ~ x, type="eps-svr", kernel="polydot",
+                C=1, epsilon=0.1, 
+                kpar=list(degree=1, scale=1, offset=1))
 
 # To obtain y_hat
 y_hat_pol <- predict(mod_pol)
@@ -54,9 +55,10 @@ points(x=x, y=y_hat_pol, type="l", lwd=2, col="blue")
 
 # svm radial --------------------------------------------------------------
 
-# Para ajustar el modelo
-mod_rad <- svm(y ~ x, type="eps-regression", kernel="radial",
-               cost=1, epsilon=0.1)
+# Para ajustar el modelo con los hiper-parametros por defecto
+mod_rad <- ksvm(y ~ x, type="eps-svr", kernel="rbfdot",
+                C=1, epsilon=0.1,
+                kpar=list(sigma=1))
 
 # To obtain y_hat
 y_hat_rad <- predict(mod_rad)
@@ -81,70 +83,7 @@ legend("topright", lty=1,
 
 # Tuning parameters -------------------------------------------------------
 
-# Vamos a sintonizar los parametros de svm lineal
-lin_tune <- tune.svm(y~x, kernel="linear",
-                    cost=c(0.1, 0.5, 1, 1.5),
-                    epsilon=c(0.1, 0.5, 1, 1.5))
-summary(lin_tune)
-
-# Vamos a sintonizar los parametros de svm polinomial
-pol_tune <- tune.svm(y~x, kernel="polynomial",
-                     degree=c(2, 3, 4),
-                     gamma=c(0.1, 1, 2),
-                     coef0=c(0.1, 0.5, 1, 2, 3),
-                     cost=c(0.1, 0.5, 1, 1.5),
-                     epsilon=c(0.1, 0.5, 1, 1.5))
-summary(pol_tune)
-
-# Vamos a sintonizar los parametros de svm radial
-rad_tune <- tune.svm(y~x, kernel="radial",
-                     gamma=c(0.1, 0.5, 1, 1.5, 2),
-                     cost=c(0.1, 0.5, 1, 1.5),
-                     epsilon=c(0.1, 0.5, 1, 1.5))
-summary(rad_tune)
-
-# Identificando los valores de los hipeparametros que mejoran 
-# cada modelo
-
-lin_tune$best.model
-pol_tune$best.model
-rad_tune$best.model
-
-# Los mejores modelos -----------------------------------------------------
-
-# El mejor lineal
-best_lin <- lin_tune$best.model
-y1 <- predict(best_lin)
-cor(y, y1)
-mse(y, y1)
-
-# El mejor polinomial
-best_pol <- pol_tune$best.model
-y2 <- predict(best_pol)
-cor(y, y2)
-mse(y, y2)
-
-# El mejor radial
-best_rad <- rad_tune$best.model
-y3 <- predict(best_rad)
-cor(y, y3)
-mse(y, y3)
-
-
-# Comparando sin tuning y con tuning --------------------------------------
-
-par(mfrow=c(1, 2))
-
-plot(x, y, pch=20, main="Default", las=1)
-points(x=x, y=y_hat_lin, type="l", col="red")
-points(x=x, y=y_hat_pol, type="l", col="blue")
-points(x=x, y=y_hat_rad, type="l", col="forestgreen")
-legend("topright", lty=1, bty="n",
-       col=c("red", "blue", "forestgreen"),
-       legend=c("Linear", "Polynomial", "Radial"))
-
-plot(x, y, pch=20, main="Best tune parameters", las=1)
-points(x=x, y=y1, type="l", col="red")
-points(x=x, y=y2, type="l", col="blue")
-points(x=x, y=y3, type="l", col="forestgreen")
+# En stackoverflow un usuario hizo una pregunta interesante al respecto
+# visitar
+# https://stackoverflow.com/questions/26459650/tuning-ksvm-from-kernlab
 
