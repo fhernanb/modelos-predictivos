@@ -50,10 +50,10 @@ datis <- datos %>% mutate_all(scale01) # scaled data
 
 # Vamos a explorar la media y varianza de los datos sin/con transformacion
 # pero vamos a crear una funcioncita para esto.
-mean_var <- function(x) c(min=min(x), med=mean(x), max=max(x))
+funcioncita <- function(x) c(min=min(x), med=mean(x), max=max(x))
 
-apply(datos, MARGIN=2, FUN=mean_var) # sin transf
-apply(datis, MARGIN=2, FUN=mean_var) # con transf
+apply(datos, MARGIN=2, FUN=funcioncita) # sin transf
+apply(datis, MARGIN=2, FUN=funcioncita) # con transf
 
 # Ajustado el modelo con neuralnet ----------------------------------------
 
@@ -98,8 +98,8 @@ predict(mod1, newdata=datis[k ,]) # igual al manual
 # Creando un vector con todas las predicciones usando los datos transf
 yhat1 <- predict(mod1, newdata=datis)
 
-# Calculando el MSE
-mean((datis$y - yhat1)^2)
+# Calculando el error
+sum((datis$y - yhat1)^2) / 2
 
 # Explorando las predicciones en el mundo transformado
 par(mfrow=c(1, 2))
@@ -110,6 +110,7 @@ abline(a=0, b=1, col="dodgerblue2", lwd=2)
 cor(x=datis[, 1], y=yhat1)
 
 # Explorando las predicciones en el mundo normal (no transf)
+# Debemos usar la transformada inversa
 yhat1_nt <- yhat1 * (max(datos$y) - min(datos$y)) + min(datos$y)
 plot(x=datos$y, y=yhat1_nt, las=1, xlab="y",
      main="Real world")
@@ -127,7 +128,7 @@ mod_lm <- lm(y ~ x1 + x2, data=datos)
 yhat_lm <- predict(mod_lm)
 
 # Calculando el MSE
-mean((datos$y - yhat_lm)^2) # Depende de las unidade de Y
+sum((datos$y - yhat_lm)^2) / 2 # Depende de las unidade de Y
 
 # Comparando modelo nn y lm -----------------------------------------------
 cor(x=datos$y, y=yhat1_nt)
@@ -191,8 +192,8 @@ mod2$wts
 # Creando un vector con todas las predicciones usando los datos transf
 yhat2 <- predict(mod2, newdata=datis)
 
-# Calculando el MSE
-mean((datis$y - yhat2)^2)
+# Calculando el error
+sum((datis$y - yhat2)^2) / 2
 
 # Explorando las predicciones con ambas redes
 par(mfrow=c(1, 2))
@@ -220,7 +221,7 @@ cbind(mse_neuralnet, mse_nn)
 
 # Tarea: volver a ajustar mod1 y mod2 pero modificando los otros 
 # argumentos de las funciones y cambiando la ARQUITECTURA de la red
-# para conseguir modelos con MSE menores a los mostrados aqui. 
+# para conseguir modelos con ERRORES menores a los mostrados aqui. 
 # Le apuesto que usted logra disminuir aun mas los MSE.
 
 
