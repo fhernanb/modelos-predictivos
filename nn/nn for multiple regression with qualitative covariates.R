@@ -17,7 +17,7 @@ mod0 <- neuralnet(Price ~ EngineSize + Type, data=Cars93,
                   algorithm="rprop+",
                   err.fct="sse",
                   act.fct="logistic",
-                  hidden=c(1))
+                  hidden=c(2, 2))
 
 
 # Transformando las variables CUALITATIVAS a 0 y 1 ------------------------
