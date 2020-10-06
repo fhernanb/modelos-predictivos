@@ -61,13 +61,14 @@ abline(a=0, b=1, col="blue3")
 # Usando el paquete kknn --------------------------------------------------
 library(kknn)
 
+# train.kknn sirve para ajustar el modelo y 
+# sirve encontrar los hiperparametros simulataneamente.
 fit2 <- train.kknn(Price ~ Weight + MPG.city,
                    data=Cars93[i_train, ],
-                   distance=2,
-                   kernel="triangular",
-                   kmax=15,
-                   kcv=10,
-                   scale=FALSE)
+                   distance=3,
+                   kmax=2,
+                   kernel="gaussian",
+                   scale=TRUE)
 
 # Para ver la clase del objeto
 class(fit2)

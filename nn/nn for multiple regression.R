@@ -50,7 +50,10 @@ datis <- datos %>% mutate_all(scale01) # scaled data
 
 # Vamos a explorar la media y varianza de los datos sin/con transformacion
 # pero vamos a crear una funcioncita para esto.
-funcioncita <- function(x) c(min=min(x), med=mean(x), max=max(x))
+funcioncita <- function(x) c(Minimo=min(x), 
+                             Media=mean(x), Mediana=median(x),
+                             Desvi=sd(x), Vari=var(x), 
+                             Maximo=max(x))
 
 apply(datos, MARGIN=2, FUN=funcioncita) # sin transf
 apply(datis, MARGIN=2, FUN=funcioncita) # con transf
