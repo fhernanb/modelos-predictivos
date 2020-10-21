@@ -77,7 +77,7 @@ class(fit2)
 names(fit2)
 
 # Para ver los mejores hyper parametros
-fit2$best.parameters
+fit2$best.parameters # aqui no tiene sentido
 
 # Para explorar las estimaciones
 y_hat2 <- predict(fit2, newdata=x_test)

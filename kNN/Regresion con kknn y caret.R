@@ -20,16 +20,15 @@ Cars93 %>% plot_ly(x=~Weight, y=~MPG.city, z=~Price, color=~Price)
 # Particion de los datos, vamos a usar aprox 60% y 40% para train y test
 i_train <- sample(1:93, size=60)
 
-train_data <- Cars93[i_train, ]
-test_data <- Cars93[-i_train, ]
+train_data <- Cars93[i_train, ] # 60 obs
+test_data <- Cars93[-i_train, ] # 33 obs
 
 # Tunning the model -------------------------------------------------------
 library(caret)
 
 # Control parameters for train
-fitControl <- trainControl(method = "repeatedcv",
-                           number = 10,
-                           repeats = 10)
+fitControl <- trainControl(method = "cv",
+                           number = 7)
 
 # Using my own grid -------------------------------------------------------
 # Aqui vamos a elegir nosotros mismo los valores de los
@@ -37,7 +36,7 @@ fitControl <- trainControl(method = "repeatedcv",
 
 my_grid <- expand.grid(kmax=c(2, 3, 5),
                        distance=c(1, 2),
-                       kernel=c("gaussian", "optimal"))
+                       kernel=c("gaussian", "triangular"))
 
 # To control the re-sampling
 set.seed(825) 
@@ -64,7 +63,7 @@ fit1$bestTune
 # hiper-parametros (los que pueda elegir).
 
 # To control the re-sampling
-set.seed(825) 
+set.seed(825)
 
 # To train the model
 fit2 <- train(Price ~ Weight + MPG.city, 

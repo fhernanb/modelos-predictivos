@@ -31,7 +31,7 @@ new_x <- data.frame(Weight=3500, MPG.city=21)
 plot(x_train, pch=20, las=1)
 grid()
 points(new_x, col="red", pch=20)
-points(x=3496, y=19, pch=1, cex=2, col="blue")
+points(x=3496, y=19, pch=1, cex=2, col="blue") # vecino cercano Ecuclidean
 
 # Vamos a aplicar k=1 NN a ojo
 k <- 1
@@ -44,7 +44,7 @@ library(dplyr)
 new_df <- bind_rows(x_train, new_x)
 
 # Calculemos las distancias
-d <- dist(new_df)
+d <- dist(new_df, method="euclidean")
 print(d, digits=0)
 
 # Para obtener y_hat
