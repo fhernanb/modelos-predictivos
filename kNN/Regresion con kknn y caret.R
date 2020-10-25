@@ -31,8 +31,8 @@ fitControl <- trainControl(method = "cv",
                            number = 7)
 
 # Using my own grid -------------------------------------------------------
-# Aqui vamos a elegir nosotros mismo los valores de los
-# hiper parametros para buscar la combinacion que optimize la metrica
+# Aqui vamos a elegir nosotros mismos los valores de los
+# hiper-parametros para buscar la combinacion que optimize la metrica
 
 my_grid <- expand.grid(kmax=c(2, 3, 5),
                        distance=c(1, 2),
@@ -60,7 +60,8 @@ fit1$bestTune
 
 # Using random grid -------------------------------------------------------
 # Aqui vamos a dejar que train elija los valores de los 
-# hiper-parametros (los que pueda elegir).
+# hiper-parametros (los que pueda elegir). Solo vamos a pedir
+# que considere 4 valores
 
 # To control the re-sampling
 set.seed(825)
