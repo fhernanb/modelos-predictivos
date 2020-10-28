@@ -26,20 +26,20 @@ test_data <- Cars93[-i_train, ] # 33 obs
 # Tunning the model -------------------------------------------------------
 library(caret)
 
-# Control parameters for train
-fitControl <- trainControl(method = "cv",
-                           number = 7)
-
 # Using my own grid -------------------------------------------------------
 # Aqui vamos a elegir nosotros mismos los valores de los
 # hiper-parametros para buscar la combinacion que optimize la metrica
+
+# Control parameters for train
+fitControl <- trainControl(method = "cv",
+                           number = 7)
 
 my_grid <- expand.grid(kmax=c(2, 3, 5),
                        distance=c(1, 2),
                        kernel=c("gaussian", "triangular"))
 
 # To control the re-sampling
-set.seed(825) 
+set.seed(825)
 
 # To train the model
 fit1 <- train(Price ~ Weight + MPG.city, 

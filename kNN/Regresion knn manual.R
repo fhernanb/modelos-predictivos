@@ -70,7 +70,7 @@ library(FNN)
 
 # Vamos a ajustar el modelo y luego a predecir usando k=1
 fit1 <- knn.reg(train=x_train, y=y_train, test=new_x, k=1)
-fi1t$pred
+fit1$pred
 
 # Vamos a ajustar el modelo y luego a predecir usando k=2
 fit2 <- knn.reg(train=x_train, y=y_train, test=new_x, k=2)

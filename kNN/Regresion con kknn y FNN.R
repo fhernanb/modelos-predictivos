@@ -36,7 +36,9 @@ Cars93 %>% select(Price) %>% slice(-i_train) %>% pull() -> y_test
 library(FNN)
 
 fit1 <- knn.reg(train=x_train, test=x_test, y=y_train, 
-               k=5, algorithm="kd_tree")
+               k=3, algorithm="cover_tree")
+
+fit1
 
 # Para ver la clase del objeto
 class(fit1)
@@ -61,13 +63,15 @@ abline(a=0, b=1, col="blue3")
 # Usando el paquete kknn --------------------------------------------------
 library(kknn)
 
-# train.kknn sirve para ajustar el modelo y 
-# sirve encontrar los hiperparametros simulataneamente.
+# train.kknn sirve para dos cosas:
+# 1) para ajustar el modelo y
+# 2) para encontrar los hiperparametros.
+# En este ejemplo NOOO vamos a sintonizar hiper-parametros
 fit2 <- train.kknn(Price ~ Weight + MPG.city,
                    data=Cars93[i_train, ],
-                   distance=3,
-                   kmax=2,
-                   kernel="gaussian",
+                   distance=2,
+                   kmax=3,
+                   kernel="rectangular",
                    scale=TRUE)
 
 # Para ver la clase del objeto
@@ -75,9 +79,6 @@ class(fit2)
 
 # Para ver los elementos dentro del objeto
 names(fit2)
-
-# Para ver los mejores hyper parametros
-fit2$best.parameters # aqui no tiene sentido
 
 # Para explorar las estimaciones
 y_hat2 <- predict(fit2, newdata=x_test)
