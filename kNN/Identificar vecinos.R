@@ -7,10 +7,8 @@
 datos <- data.frame(x1=c(3, 4, 1, 5, 2), 
                     x2=c(2, 7, 7, 4, 3))
 
-row.names(datos) <- LETTERS[1:5]
-
 # Dibujando los datos
-plot(datos, las=1, pch=row.names(datos), ylim=c(0, 8))
+plot(datos, las=1, pch=as.character(1:5), ylim=c(0, 8))
 grid()
 
 # Calculando las distancias euclideanas pero se puede usar otra

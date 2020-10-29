@@ -1,6 +1,9 @@
+# -------------------------------------------------------------------------
 # Los ejemplos mostrados aqui estan basados en el video
 # Regularization Part 2: Lasso (L1) Regression
 # https://youtu.be/NGf0voTMlcs
+# -------------------------------------------------------------------------
+
 
 # Los datos que vamos a usar
 library(MASS)

@@ -1,6 +1,9 @@
+# -------------------------------------------------------------------------
 # Los ejemplos mostrados aqui estan basados en el video
 # Regularization Part 1: Ridge (L2) Regression
 # https://youtu.be/Q81RR3yKn30
+# -------------------------------------------------------------------------
+
 
 # Los datos que vamos a usar
 library(MASS)
