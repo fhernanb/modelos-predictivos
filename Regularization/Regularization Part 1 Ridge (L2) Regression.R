@@ -18,13 +18,13 @@ str(Cars93)
 with(Cars93, plot(x=EngineSize, y=Price))
 
 # Supongamos que nuestro conjunto de Train es pequeno
-# y que solo tiene 3 observaciones
+# y que solo tiene 2 observaciones
 indices <- c(84, 40)
 train_data <- Cars93[ indices, c("Price", "EngineSize")]
 test_data  <- Cars93[-indices, c("Price", "EngineSize")]
 
 # Vamos a ver las observaciones seleccionadas para Train
-with(Cars93, plot(x=EngineSize, y=Price))
+with(Cars93, plot(x=EngineSize, y=Price, las=1))
 with(train_data, points(x=EngineSize, y=Price, col="tomato", pch=19))
 
 # Funcion objetivo a minimizar, Minimos Cuadrados
@@ -41,6 +41,12 @@ func_obj <- function(betas, data) {
 mod1 <- optim(par=c(0, 0), fn=func_obj, data=train_data)
 mod1
 
+# Egreguemos el modelo ajustado al diagrama de dispersion anterior
+with(Cars93, plot(x=EngineSize, y=Price, las=1))
+with(train_data, points(x=EngineSize, y=Price, col="tomato", pch=19))
+abline(a=-30.69995, b=26.99962, col="tomato")
+
+
 # Vamos a calcular el Error Cuadratico Medio (ECM) 
 # con Train y Test usando el modelo mod creado antes
 
@@ -54,6 +60,8 @@ y_hat <- mod1$par[1] + mod1$par[2] * test_data$EngineSize
 ecm_test1 <- mean((test_data$Price - y_hat)^2)
 ecm_test1
 
+# Ahora vamos a implementar la regresion RIDGE manualmente
+
 # Funcion objetivo a minimizar usando RIDGE (l)
 func_obj_l <- function(betas, l, data) {
   b0 <- betas[1] # intercepto
@@ -66,9 +74,15 @@ func_obj_l <- function(betas, l, data) {
 # Usemos optim para encontrar los valores de b0 y b1
 # que minimizan la funcion objetivo
 
-l <- 10 # valor de penalizacion lambda (seleccion caprichosa)
+l <- 0.7 # valor de penalizacion lambda (seleccion caprichosa)
 mod2 <- optim(par=c(0, 0), fn=func_obj_l, l=l, data=train_data)
 mod2
+
+# Egreguemos los dos modelos ajustados
+with(Cars93, plot(x=EngineSize, y=Price, las=1))
+with(train_data, points(x=EngineSize, y=Price, col="tomato", pch=19))
+abline(a=-30.69995, b=26.99962, col="tomato")
+abline(a=10.8530989, b=0.1911808, col="blue")
 
 # Vamos a calcular el Error Cuadratico Medio (ECM) 
 # con Train y Test usando el modelo mod creado antes
