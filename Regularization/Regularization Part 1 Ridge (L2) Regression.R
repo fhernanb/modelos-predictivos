@@ -15,7 +15,7 @@ str(Cars93)
 # lineal simple para explicar Precio ~ EngineSize
 
 # Para ver los datos
-with(Cars93, plot(x=EngineSize, y=Price))
+with(Cars93, plot(x=EngineSize, y=Price, las=1))
 
 # Supongamos que nuestro conjunto de Train es pequeno
 # y que solo tiene 2 observaciones
@@ -100,7 +100,12 @@ ecm_test2
 # Comparando los resultados
 cbind(ecm_train1, ecm_test1, ecm_train2, ecm_test2)
 
+# Tarea: explorar varios valores de lambda y calcular el ECM
+# con los datos test, explore si hay un valor de lambda
+# que minimice ecm_test
+
 # Ejemplo 2 ---------------------------------------------------------------
+
 # En este ejemplo se creara un modelo de regresion 
 # lineal RIDGE usando el paquete glmnet para explicar 
 # Price ~ EngineSize + Weight + MPG.city
@@ -131,6 +136,7 @@ my_ridge$par # coincide con coef(fit)
 # visitar este enlace para mas detalles: https://rpubs.com/Joaquin_AR/242707
 library(glmnet)
 
+# Debemos crear la matriz x y el vector y
 y <- Cars93$Price
 x <- model.matrix(Price ~ - 1 + EngineSize + Weight + MPG.city, 
                   data = Cars93)
@@ -139,13 +145,15 @@ x <- model.matrix(Price ~ - 1 + EngineSize + Weight + MPG.city,
 head(x)
 
 # Para obtener un ajuste mediante ridge regression 
-# se usa argumento alpha=0.
+# se usa argumento alpha=0 si estamos en regresion ridge
 modelos_ridge <- glmnet(x=x, y=y, alpha=0,
                         family="gaussian")
 
 # Para ver los resultados
 plot(modelos_ridge, xvar = "lambda", label = TRUE, las=1)
 grid()
+
+# Tarea: trate de buscar los beta estimados cuando lambda=0
 
 # Con el fin de identificar el valor de lambda que da lugar al 
 # mejor modelo, se puede recurrir a Cross-Validation. 
@@ -194,3 +202,4 @@ cor(y, y_hat)
 # Diagrama de dispersion entre y e y_hat
 plot(x=y, y=y_hat, las=1, asp=1)
 abline(a=0, b=1, lty="dashed", col="tomato")
+
