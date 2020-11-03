@@ -110,9 +110,23 @@ cbind(ecm_train1, ecm_test1, ecm_train2, ecm_test2)
 # lineal RIDGE usando el paquete glmnet para explicar 
 # Price ~ EngineSize + Weight + MPG.city
 
+# Mi funcion para estandariza
+my_stand <- function(x) x / sqrt(mean( (x-mean(x))^2 ))
+my_stand <- function(x) x / sd(x)
+
+datos <- apply(X=Cars93[, c("Price", "EngineSize", "Weight", "MPG.city")],
+               MARGIN=2, 
+               FUN=my_stand)
+
+# Transformando los datos
+datos <- as.data.frame(datos)
+
+# Verificando
+apply(X=datos, MARGIN=2, FUN=sd)
+
 # Ajustando el modelo con lm
 fit <- lm(Price ~ EngineSize + Weight + MPG.city, 
-          data = Cars93)
+          data = datos)
 coef(fit)
 
 # Ajustando el modelo con Ridge manual
@@ -127,7 +141,7 @@ func_obj_l <- function(betas, l, data) {
 }
 
 my_ridge <- optim(par=c(0, 0, 0, 0), fn=func_obj_l, 
-                  l=0, data=Cars93, 
+                  l=0, data=datos, 
                   control=list(maxit=10000, reltol=1e-15))
 
 my_ridge$par # coincide con coef(fit)
@@ -137,23 +151,24 @@ my_ridge$par # coincide con coef(fit)
 library(glmnet)
 
 # Debemos crear la matriz x y el vector y
-y <- Cars93$Price
+y <- datos$Price
 x <- model.matrix(Price ~ - 1 + EngineSize + Weight + MPG.city, 
-                  data = Cars93)
+                  data = datos)
 
 # Para explorar la matriz x
 head(x)
 
 # Para obtener un ajuste mediante ridge regression 
 # se usa argumento alpha=0 si estamos en regresion ridge
-modelos_ridge <- glmnet(x=x, y=y, alpha=0,
+# vamos a usar lambda=0 para obtener los mismos resultados
+# de nuestro rigde manual
+modelos_ridge <- glmnet(x=x, y=y, 
+                        alpha=0, lambda=0,
                         family="gaussian")
 
-# Para ver los resultados
-plot(modelos_ridge, xvar = "lambda", label = TRUE, las=1)
-grid()
+# Para ver los coeficientes
+coef(modelos_ridge) # valores cercanos a los obtenidos manualmente!!!
 
-# Tarea: trate de buscar los beta estimados cuando lambda=0
 
 # Con el fin de identificar el valor de lambda que da lugar al 
 # mejor modelo, se puede recurrir a Cross-Validation. 
@@ -203,3 +218,4 @@ cor(y, y_hat)
 plot(x=y, y=y_hat, las=1, asp=1)
 abline(a=0, b=1, lty="dashed", col="tomato")
 
+# Tarea: averiguar como se obtiene y^ para una nueva base de datos
