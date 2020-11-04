@@ -12,7 +12,7 @@ gen_dat <- function (n) {
   datos <- data.frame(y=y, x=x)
 }
 
-set.seed(2020)
+set.seed(2021)
 n <- 30
 datos <- gen_dat(n=n)
 
@@ -63,14 +63,15 @@ y_hat3 <- predict(mod3, datos)
 estimaciones <- cbind(lm=y_hat1, 
                       svm_manual=y_hat2, 
                       svm_e1071=y_hat3)
+
 head(estimaciones, n=3)
 
-# Comparando los parametros
+# Comparando los parametros usando lm, svm manual y svm automatica
 coef(mod1)
 mod2$par
 coef(mod3)
 
-# Agregando la recta al diagrama de dispersion
+# Agregando la recta al diagrama de dispersion para ver los modelos
 with(datos, plot(x=x, y=y, las=1, ylim=c(-3, 3)))
 abline(mod1, col="blue")
 abline(a=mod2$par[1], b=mod2$par[2], col="black", lwd=4)
@@ -80,7 +81,7 @@ legend("topleft", col=c("blue", "black", "orange"),
        lwd=c(1, 4, 1), bty="n",
        legend=c("with lm", "svm manual", "svm e1071"))
 
-# Mostremos los margenes de svm -------------------------------------------
+# Mostremos los margenes de svm al diagrama de dispersion
 with(datos, plot(x=x, y=y, las=1))
 abline(mod3)
 abline(a=coef(mod3)[1]-my_epsilon, b=coef(mod3)[2], lty="dashed")
