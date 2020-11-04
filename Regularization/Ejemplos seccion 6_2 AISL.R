@@ -66,6 +66,7 @@ rigde.mod <- glmnet(x=x, y=y,
 coef(rigde.mod)
 
 # Para dibujar la evolucion de los coeficientes
+plot(rigde.mod)
 plot(rigde.mod, label=TRUE, xvar="lambda", las=1)
 plot(rigde.mod, label=TRUE, xvar="norm", las=1)
 plot(rigde.mod, label=TRUE, xvar="dev", las=1)

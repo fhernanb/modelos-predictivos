@@ -1,6 +1,9 @@
+# -------------------------------------------------------------------------
 # En este script se muestra como crear svm para regresion
 # de forma manual. Adicionalmente se comparan los resultados
 # con los obtenidos del funcion svm del paquete e1071
+# -------------------------------------------------------------------------
+
 
 # Generando unos datos artificiales
 gen_dat <- function (n) {
@@ -9,7 +12,7 @@ gen_dat <- function (n) {
   datos <- data.frame(y=y, x=x)
 }
 
-#set.seed(2020)
+set.seed(2020)
 n <- 30
 datos <- gen_dat(n=n)
 
