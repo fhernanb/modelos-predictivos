@@ -81,9 +81,3 @@ legend("topright", lty=1,
        legend=c("Linear", "Polynomial", "Radial"))
 
 
-# Tuning parameters -------------------------------------------------------
-
-# En stackoverflow un usuario hizo una pregunta interesante al respecto
-# visitar
-# https://stackoverflow.com/questions/26459650/tuning-ksvm-from-kernlab
-
