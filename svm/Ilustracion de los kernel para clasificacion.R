@@ -161,4 +161,6 @@ y_hat <- predict(mod, type="response")
 table(y_hat, y)
 plot(mod, data=x)
 
-
+# Tarea:
+# Revisar este enlace 
+# https://scikit-learn.org/stable/modules/metrics.html#polynomial-kernel
