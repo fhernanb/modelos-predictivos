@@ -79,5 +79,3 @@ points(x=x, y=y_hat_rad, type="l", lwd=2, col="forestgreen")
 legend("topright", lty=1,
        col=c("red", "blue", "forestgreen"),
        legend=c("Linear", "Polynomial", "Radial"))
-
-
