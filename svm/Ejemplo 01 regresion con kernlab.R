@@ -31,7 +31,7 @@ mse(y, y_hat_lin)
 
 # To illustrate the results
 plot(x, y, pch=20)
-points(x=x, y=y_hat_lin, type="l", lwd=2, col="red")
+points(x=x, y=y_hat_lin, type="l", lwd=6, col="red")
 
 
 # svm polinomial ----------------------------------------------------------
@@ -72,8 +72,8 @@ plot(x, y, pch=20)
 points(x=x, y=y_hat_rad, type="l", lwd=2, col="forestgreen")
 
 # Comparing ---------------------------------------------------------------
-plot(x, y, pch=20)
-points(x=x, y=y_hat_lin, type="l", lwd=2, col="red")
+plot(x, y, pch=20, las=1)
+points(x=x, y=y_hat_lin, type="l", lwd=6, col="red")
 points(x=x, y=y_hat_pol, type="l", lwd=2, col="blue")
 points(x=x, y=y_hat_rad, type="l", lwd=2, col="forestgreen")
 legend("topright", lty=1,
