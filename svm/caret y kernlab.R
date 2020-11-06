@@ -1,6 +1,8 @@
 # -------------------------------------------------------------------------
 # En este ejemplo se usan datos artificiales (simulados) mostrando
-# el uso de caret para sintonizar los hiper-parametros
+# el uso de caret para sintonizar los hiper-parametros.
+# Primero se construira una svm sin sintonizar
+# luego se usara train() de caret para sintonizar
 # -------------------------------------------------------------------------
 
 
