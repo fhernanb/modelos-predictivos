@@ -1,6 +1,7 @@
 # -------------------------------------------------------------------------
-# En este script se muestra como crear un kernel manual
-# En este script se muestra el efecto de los kernel
+# En este script se muestra como crear un kernel polinomial manual
+# para un problema de clasificacion.
+# y el efecto de los kernel
 # -------------------------------------------------------------------------
 
 # A continuacion los datos que vamos a usar
@@ -9,17 +10,18 @@ x1 <- c(1,1,2,3,3,6,6,6,9,9,10,11,12,13,16,18)
 x2 <- c(18,13,9,6,15,11,6,3,5,2,10,5,6,1,3,1)
 datos <- data.frame(x1=x1, x2=x2)
 
-# La variable respuesta se muestra a continuacion
+# La variable respuesta (y o grupo) se muestra a continuacion
+y <- c(-1, -1, -1, -1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1)
 grupo <- c("red", "red", "red", "red", "green4", "green4",
            "green4", "red", "green4", "red", "green4", 
            "green4", "green4", "red", "green4", "red")
-y <- c(-1, -1, -1, -1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1)
 
 # Dibujemos los datos
 with(datos, plot(x=x1, y=x2, las=1, pch=20, col=grupo))
 
 # Aqui vamos a usar un kernel que convierte la pareja
 # (x1, x2) a la terna (x1^2, sqrt(2) * x1 * x2, x2^2)
+
 my_kernel <- function(datos) {
   a <- datos[, 1]
   b <- datos[, 2]
@@ -33,10 +35,11 @@ my_kernel <- function(datos) {
 datos_transf <- my_kernel(datos)
 datos_transf
 
-# Vamos a crear un diagrama dispersion 3d, muevalo!!!
+# Vamos a crear un diagrama dispersion 3d, muevalo con el mouse!!!
 library(rgl)
 with(datos_transf, plot3d(x=z1, y=z2, z=z3, col=grupo, size=10))
 
+# Primera forma
 # Vamos autilizar los datos transformados para obtener 
 # la matriz cuadrada simetrica de transformacion
 x_transf <- as.matrix(datos_transf)
@@ -65,6 +68,7 @@ y <- c(-1, -1, -1, -1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1)
 cbind(x, y)
 
 # Vamos a convertir a la matriz x en x_transf usando polydot
+# y luego vamos a crear una svm "lineal"
 my_poli <- polydot(degree=2, scale=1, offset=0)
 x_transf <- kernelMatrix(kernel=my_poli, x=x)
 
@@ -82,13 +86,16 @@ fit2 <- ksvm(x=x, y=y, kernel="polydot",
 
 y_hat2 <- predict(fit2, type="response")
 
-# Comparemos las estimaciones
+# NOTA: en fit1 se uso x_transf mientras que en fit2 se uso x. 
+# diferencia esta en el kernel.
+
+# Comparemos las estimaciones para verificar que coinciden
 cbind(y_hat1, y_hat2)
 
 # Construyamos una tabla
 table(auto=y_hat1, manual=y_hat2)
 
-# Comparemos con los valores reales
+# Construyamos una tabla de CONFUSION (usando y_hat1 o y_hat2)
 table(real=y, estimado=y_hat1)
 
 # Que sucede si usamos kernel="vanilladot" y no transformamos?

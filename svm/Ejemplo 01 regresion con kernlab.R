@@ -9,8 +9,12 @@ set.seed(1234)
 x <- sort(runif(n=40, min=0, max=5)) # sort for convenience
 set.seed(1234)
 y <- sin(x) + rnorm(40, sd=0.3)
-plot(x, y, pch=20, las=1)
 
+# Construyendo el dataframe
+datos <- data.frame(x=x, y=y)
+
+# Diagrama de dispersion
+plot(x, y, pch=20, las=1)
 
 # Funcion para calcular MSE -----------------------------------------------
 mse <- function(y, y_hat) mean((y - y_hat)^2)
