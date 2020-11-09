@@ -65,11 +65,11 @@ apply(datis, MARGIN=2, FUN=funcioncita) # con transf
 
 library(neuralnet)
 mod1 <- neuralnet(y ~ x1 + x2, data=datis,
+                  hidden=c(1),
                   rep=1,
                   algorithm="rprop+",
                   err.fct="sse",
-                  act.fct="logistic",
-                  hidden=c(1))
+                  act.fct="logistic")
 
 # Dibujando la red entrenada
 plot(mod1, rep = 'best')
@@ -171,10 +171,11 @@ box()
 
 # Vamos a crear una red con 1 sola capa interna y 1 sola neurona
 # funcion de activacion logistica
+# Nota: nnet solo permite UNA capa
 
 library(nnet)
 mod2 <- nnet(y ~ x1 + x2, data=datis,
-             size=c(1),
+             size=1,
              softmax=FALSE,
              maxit=1000)
 
