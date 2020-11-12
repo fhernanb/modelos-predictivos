@@ -6,8 +6,10 @@ Created on Thu Nov 12 08:22:27 2020
 """
 
 # -------------------------------------------------------------------------
-# En este ejemplo se usan datos artificiales (simulados) para mostrar
-# el uso de svm en regresion
+# En este ejemplo se busca encontrar un modelo de regresion que explique 
+# la variable respuesta y en función de las covariables x1 a x11, los datos 
+# provienen del ejercicio 9.5 del libro de Montgomery, Peck and Vining (2003).
+# El paquete MPV (Braun 2019) contiene todos los datos que acompañan al libro.
 # -------------------------------------------------------------------------
 
 # Librerías a usar
@@ -15,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.tree import DecisionTreeRegressor
-
+from sklearn import tree
 
 # Los datos a usar estan disponibles en un repositorio de github
 file = "https://raw.githubusercontent.com/fhernanb/datos/master/table_b3_MASS.txt"
@@ -35,8 +37,8 @@ y = datos["y"]
 # Creando el modelo arbol --------------------------------------------------
 # Vamos a crear dos modelos alternativos
 
-mod1 = DecisionTreeRegressor(criterion='mse', max_depth=3, random_state=0)
-mod2 = DecisionTreeRegressor(criterion='mse', max_depth=5, random_state=0)
+mod1 = DecisionTreeRegressor(criterion='mse', max_depth=2, random_state=0)
+mod2 = DecisionTreeRegressor(criterion='mse', max_depth=3, random_state=0)
 
 mod1.fit(X, y)
 mod2.fit(X, y)

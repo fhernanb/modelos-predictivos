@@ -9,6 +9,17 @@ set.seed(1234)
 x <- sort(runif(n=40, min=0, max=5)) # sort for convenience
 set.seed(1234)
 y <- sin(x) + rnorm(40, sd=0.3)
+
+# Construyendo el dataframe
+datos <- data.frame(x=x, y=y)
+
+# Los mismos datos estan disponibles en 
+# https://raw.githubusercontent.com/fhernanb/datos/master/datos_svm_regresion.txt
+file <- "https://raw.githubusercontent.com/fhernanb/datos/master/datos_svm_regresion.txt"
+datos <- read.table(file, header=TRUE)
+head(datos)
+
+# Diagrama de dispersion
 plot(x, y, pch=20, las=1)
 
 
