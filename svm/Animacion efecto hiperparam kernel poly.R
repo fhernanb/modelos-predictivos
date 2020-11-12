@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------------
 # En este ejemplo se usan datos artificiales (simulados) para mostrar
 # el efecto que tienen los hiper-parametros de un kernel polinomial
-# eb una svm para regresion
+# en una svm para regresion
 # -------------------------------------------------------------------------
 
 
