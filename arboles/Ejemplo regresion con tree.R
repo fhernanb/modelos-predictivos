@@ -17,13 +17,13 @@ datos[c(23, 25), ]
 datos <- datos[-c(23, 25), ]
 
 # Vamos a construir el modelo
-library(rpart)
-library(rpart.plot)
+library(tree)
 
-mod1 <- rpart(y ~ ., data=datos)
+mod1 <- tree(y ~ ., data=datos)
 
 # Para dibujar el arbol
-prp(mod1)
+plot(mod1)
+text(mod1, pretty=0)
 
 # Vamos a estimar y
 y_hat <- predict(object=mod1, newdata=datos)
@@ -32,4 +32,6 @@ y_hat <- predict(object=mod1, newdata=datos)
 cor(y_hat, datos$y)
 mean((datos$y - y_hat)^2)
 
-
+# Usando 
+cv_mod <- cv.tree(mod1)
+plot(cv_mod)
