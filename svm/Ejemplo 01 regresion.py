@@ -53,7 +53,7 @@ y_hat_lin = mod_lin.predict(X)
 
 # Funcion para calcular MSE
 def mse(y, y_hat):
-    return np.mean((y - y_hat_lin)**2)
+    return np.mean((y - y_hat)**2)
 
 mse(y, y_hat_lin) # valor de mse
 
@@ -89,7 +89,7 @@ y_hat_pol = mod_pol.predict(X)
 
 # Funcion para calcular MSE
 def mse(y, y_hat):
-    return np.mean((y - y_hat_lin)**2)
+    return np.mean((y - y_hat)**2)
 
 mse(y, y_hat_pol) # valor de mse
 
@@ -125,7 +125,7 @@ y_hat_rad = mod_rad.predict(X)
 
 # Funcion para calcular MSE
 def mse(y, y_hat):
-    return np.mean((y - y_hat_lin)**2)
+    return np.mean((y - y_hat)**2)
 
 mse(y, y_hat_rad) # valor de mse
 
