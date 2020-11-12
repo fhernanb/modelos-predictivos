@@ -13,11 +13,11 @@ Created on Thu Nov 12 08:22:27 2020
 # -------------------------------------------------------------------------
 
 # Librerías a usar
-import numpy as np
 import pandas as pd
 
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import tree
+from sklearn import metrics
 
 # Los datos a usar estan disponibles en un repositorio de github
 file = "https://raw.githubusercontent.com/fhernanb/datos/master/table_b3_MASS.txt"
@@ -38,27 +38,22 @@ y = datos["y"]
 # Vamos a crear dos modelos alternativos
 
 mod1 = DecisionTreeRegressor(criterion='mse', max_depth=2, random_state=0)
-mod2 = DecisionTreeRegressor(criterion='mse', max_depth=3, random_state=0)
+mod2 = DecisionTreeRegressor(criterion='mse', max_depth=5, random_state=0)
 
 mod1.fit(X, y)
 mod2.fit(X, y)
-
-# Para ver el score
-mod1.score(X, y)
-mod2.score(X, y)
-
 
 # Estimando y usando los datos de entrenamiento
 y_hat1 = mod1.predict(X)
 y_hat2 = mod2.predict(X)
 
-# Funcion para calcular MSE
-def mse(y, y_hat):
-    return np.mean((y - y_hat)**2)
+# Para ver algunas medidas de desempeño
+metrics.r2_score(y_true=y, y_pred=y_hat1)
+metrics.r2_score(y_true=y, y_pred=y_hat2)
 
-mse(y, y_hat1) # valor de mse
-mse(y, y_hat2) # valor de mse
+metrics.mean_squared_error(y_true=y, y_pred=y_hat1)
+metrics.mean_squared_error(y_true=y, y_pred=y_hat2)
 
 # Para dibujar los dos árboles
-tree.plot_tree(mod1) 
-tree.plot_tree(mod2) 
+tree.plot_tree(mod1, filled=True)
+tree.plot_tree(mod2, filled=True) 

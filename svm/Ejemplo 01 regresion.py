@@ -11,11 +11,11 @@ Created on Wed Nov 11 18:16:49 2020
 # -------------------------------------------------------------------------
 
 # Librerías a usar
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn import svm
+from sklearn import metrics
 
 # Los datos a usar estan disponibles en un repositorio de github
 file = "https://raw.githubusercontent.com/fhernanb/datos/master/datos_svm_regresion.txt"
@@ -40,9 +40,6 @@ X = X.values.reshape((-1, 1))
 mod_lin = svm.SVR(C=1.0, epsilon=0.1, degree=1, kernel='linear')
 mod_lin.fit(X, y)
 
-# Para ver el modelo entrenado
-mod_lin
-
 # Para predecir Y cuando x1=3 y x1=4.2
 mod_lin.predict([[3.0]])            # Uno por uno
 mod_lin.predict([[4.2]])            # Uno por uno
@@ -51,14 +48,9 @@ mod_lin.predict([[3.0], [4.2]])     # Ambos
 # Estimando y usando los datos de entrenamiento
 y_hat_lin = mod_lin.predict(X)
 
-# Funcion para calcular MSE
-def mse(y, y_hat):
-    return np.mean((y - y_hat)**2)
-
-mse(y, y_hat_lin) # valor de mse
-
-# Calculando el coeficiente de correlacion de Pearson
-np.corrcoef(y, y_hat_lin)
+# Para ver algunas medidas de desempeño
+metrics.r2_score(y_true=y, y_pred=y_hat_lin)
+metrics.mean_squared_error(y_true=y, y_pred=y_hat_lin)
 
 # Agregando el modelo estimado al diagrama originar
 plt.scatter(x=datos.x, y=datos.y, color='black', alpha=0.55)
@@ -87,14 +79,9 @@ mod_pol.predict([[3.0], [4.2]])     # Ambos
 # Estimando y usando los datos de entrenamiento
 y_hat_pol = mod_pol.predict(X)
 
-# Funcion para calcular MSE
-def mse(y, y_hat):
-    return np.mean((y - y_hat)**2)
-
-mse(y, y_hat_pol) # valor de mse
-
-# Calculando el coeficiente de correlacion de Pearson
-np.corrcoef(y, y_hat_pol)
+# Para ver algunas medidas de desempeño
+metrics.r2_score(y_true=y, y_pred=y_hat_pol)
+metrics.mean_squared_error(y_true=y, y_pred=y_hat_pol)
 
 # Agregando el modelo estimado al diagrama originar
 plt.scatter(x=datos.x, y=datos.y, color='black', alpha=0.55)
@@ -123,14 +110,9 @@ mod_rad.predict([[3.0], [4.2]])     # Ambos
 # Estimando y usando los datos de entrenamiento
 y_hat_rad = mod_rad.predict(X)
 
-# Funcion para calcular MSE
-def mse(y, y_hat):
-    return np.mean((y - y_hat)**2)
-
-mse(y, y_hat_rad) # valor de mse
-
-# Calculando el coeficiente de correlacion de Pearson
-np.corrcoef(y, y_hat_rad)
+# Para ver algunas medidas de desempeño
+metrics.r2_score(y_true=y, y_pred=y_hat_rad)
+metrics.mean_squared_error(y_true=y, y_pred=y_hat_rad)
 
 # Agregando el modelo estimado al diagrama originar
 plt.scatter(x=datos.x, y=datos.y, color='black', alpha=0.55)
@@ -151,6 +133,6 @@ plt.plot(datos.x, y_hat_rad, color='green')
 plt.xlabel('Variable X')
 plt.ylabel('Variable Y')
 plt.title('SVM con kernel lineal')
-plt.legend(('Mod lin', 'Mod poly', 'Mod rad', 'Y observado'))
+plt.legend(('SVM lin', 'SVM poly', 'SVM rad', 'Y observado'))
 plt.show()
 
