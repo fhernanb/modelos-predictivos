@@ -16,20 +16,28 @@ datos[c(23, 25), ]
 # Vamos a eliminar las filas que tienen nNA
 datos <- datos[-c(23, 25), ]
 
+# Para ver la dimension de los datos
+dim(datos)
+
 # Vamos a construir el modelo
 library(rpart)
+mod_rpart <- rpart(y ~ ., data=datos)
+
+# Para dibujar el arbol con la funcion prp de rpart.plot
 library(rpart.plot)
+prp(mod_rpart)
 
-mod1 <- rpart(y ~ ., data=datos)
-
-# Para dibujar el arbol
-prp(mod1)
+# Para dibujar el arbol con la funcion fancyRpartPlot de rattle
+library(rattle)
+fancyRpartPlot(mod_rpart, palettes='Reds')
 
 # Vamos a estimar y
-y_hat <- predict(object=mod1, newdata=datos)
+y_hat <- predict(object=mod_rpart, newdata=datos)
 
 # Vamos a calcular cor y mse entre y_hat y el verdadero y
 cor(y_hat, datos$y)
 mean((datos$y - y_hat)^2)
 
-
+# Vamos a dibujar las predicciones versus los valores ajustados
+plot(x=datos$y, y=y_hat, pch=20, las=1)
+abline(a=0, b=1, col='tomato', lty='dashed')
