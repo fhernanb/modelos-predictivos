@@ -41,3 +41,25 @@ mean((datos$y - y_hat)^2)
 # Vamos a dibujar las predicciones versus los valores ajustados
 plot(x=datos$y, y=y_hat, pch=20, las=1)
 abline(a=0, b=1, col='tomato', lty='dashed')
+
+
+# Explorando los argumentos internos --------------------------------------
+
+# La funcion rpart tiene el argumento control que se puede modificar
+# para personalizar el arbol. Consultar la ayuda de rpart.control.
+
+# Abajo la estructura de rpart.control
+
+# rpart.control(minsplit = 20, minbucket = round(minsplit/3), 
+#               cp = 0.01, maxcompete = 4, maxsurrogate = 5, 
+#               usesurrogate = 2, xval = 10,
+#               surrogatestyle = 0, maxdepth = 30, ...)
+
+# Vamos a crear un arbol con maxima profundidad de 5
+# y 3 como minimo numero de observaciones para dividir nodo.
+mod_rpart_custom <- rpart(y ~ ., data=datos,
+                          control=rpart.control(maxdepth=4,
+                                                minsplit=3))
+
+fancyRpartPlot(mod_rpart_custom, palettes='RdPu')
+

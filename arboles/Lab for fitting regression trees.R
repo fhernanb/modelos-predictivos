@@ -21,5 +21,3 @@ boston.test=Boston[-train,"medv"]
 plot(yhat,boston.test)
 abline(0,1)
 mean((yhat-boston.test)^2)
-
-
