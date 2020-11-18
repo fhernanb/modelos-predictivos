@@ -62,7 +62,6 @@ plt.legend(('Modelo estimado', 'Y observado'))
 plt.show()
 
 
-
 # Creando el modelo svm con kernel polinomial -------------------------------
 
 mod_pol = svm.SVR(C=1.0, epsilon=0.1, degree=1, coef0=0, gamma=1, kernel='poly')
@@ -91,7 +90,6 @@ plt.ylabel('Variable Y')
 plt.title('SVM con kernel lineal')
 plt.legend(('Modelo estimado', 'Y observado'))
 plt.show()
-
 
 
 # Creando el modelo svm con kernel radial  -------------------------------
