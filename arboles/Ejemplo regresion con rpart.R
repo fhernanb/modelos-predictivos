@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------
 
 # Los datos a usar estan disponibles en un repositorio de github
-file <- "https://raw.githubusercontent.com/fhernanb/datos/master/table_b3_MASS.txt"
+file <- "https://raw.githubusercontent.com/fhernanb/datos/master/table_b3_MPV.txt"
 datos <- read.table(file, header=TRUE)
 head(datos)
 

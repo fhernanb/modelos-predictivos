@@ -5,12 +5,12 @@ Created on Thu Nov 12 08:22:27 2020
 @author: fhernanb
 """
 
-# -------------------------------------------------------------------------
-# En este ejemplo se busca encontrar un modelo de regresion que explique 
-# la variable respuesta y en función de las covariables x1 a x11, los datos 
-# provienen del ejercicio 9.5 del libro de Montgomery, Peck and Vining (2003).
-# El paquete MPV (Braun 2019) contiene todos los datos que acompañan al libro.
-# -------------------------------------------------------------------------
+"""
+En este ejemplo se busca encontrar un modelo de regresion que explique 
+la variable respuesta y en función de las covariables x1 a x11. los datos 
+provienen del ejercicio 9.5 del libro de Montgomery, Peck and Vining (2003).
+El paquete MPV (Braun 2019) contiene todos los datos que acompañan al libro.
+"""
 
 # Librerías a usar
 import pandas as pd
@@ -20,9 +20,9 @@ from sklearn import tree
 from sklearn import metrics
 
 # Los datos a usar estan disponibles en un repositorio de github
-file = "https://raw.githubusercontent.com/fhernanb/datos/master/table_b3_MASS.txt"
+file = "https://raw.githubusercontent.com/fhernanb/datos/master/table_b3_MPV.txt"
 datos = pd.read_csv(file, comment='#', delimiter='\t')
-datos.head()
+print(datos.head())
 
 # Exploremos las filas 22 y 24 porque hay nan
 datos.iloc[[22, 24], ]

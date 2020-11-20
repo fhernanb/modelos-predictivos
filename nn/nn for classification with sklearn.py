@@ -68,6 +68,11 @@ pd.crosstab(index=y_train, columns="Numero")
 pd.crosstab(index=y_test,  columns="Numero")
 
 # Creando svm -----------------------------------------------------------------
+
+# Para detalles sobre la función visitar:
+import webbrowser
+webbrowser.open('https://tinyurl.com/y6fx277s')
+
 mod = MLPClassifier(solver='adam', 
                     max_iter=1500,
                     alpha=1e-5,
