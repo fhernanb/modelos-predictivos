@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------
-# En este ejemplo se muestra como usar nn para regresion
-# el ejemplo esta basado en http://uc-r.github.io/ann_regression
+# En este ejemplo se muestra como usar nn para regresion.
+# El ejemplo esta basado en http://uc-r.github.io/ann_regression
 # Los datos del ejemplo se van a simular pero tambien estan disponibles
 # en un repo de github.
 # -------------------------------------------------------------------------

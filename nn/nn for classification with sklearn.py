@@ -67,7 +67,7 @@ X_train, X_test, y_train, y_test = train_test_split(scaledX, y,
 pd.crosstab(index=y_train, columns="Numero")
 pd.crosstab(index=y_test,  columns="Numero")
 
-# Creando svm -----------------------------------------------------------------
+# Creando nn -----------------------------------------------------------------
 
 # Para detalles sobre la función visitar:
 import webbrowser
