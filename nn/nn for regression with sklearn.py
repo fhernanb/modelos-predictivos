@@ -7,9 +7,9 @@ Created on Wed Nov 11 15:29:45 2020
 
 """
 En este ejemplo se muestra como usar nn para regresion.
+
 El ejemplo esta basado en http://uc-r.github.io/ann_regression
-Los datos del ejemplo se van a simular pero tambien estan disponibles
-en un repo de github.
+Los datos del ejemplo están disponibles en un repositorio de github.
 """
 
 # Librerías a usar
@@ -39,12 +39,13 @@ X_train, X_test, y_train, y_test = train_test_split(scaledX, y,
                                                     test_size=0.20, 
                                                     random_state=42)
 
-# Creando nn -----------------------------------------------------------------
+# Creando el modelo de interés ------------------------------------------------
 
-# Para detalles sobre la función visitar:
+# Para detalles sobre la función que vamos a usar visite:
 import webbrowser
 webbrowser.open('https://tinyurl.com/y9efl97l')
 
+# Para definir el modelo
 mod = MLPRegressor(solver='adam', 
                    max_iter=1500,
                    alpha=1e-5,
@@ -53,9 +54,10 @@ mod = MLPRegressor(solver='adam',
                    learning_rate='adaptive',
                    random_state=1)
 
+# Para entrenar el modelo
 mod.fit(X_train, y_train)
 
-# Estimando y usando los datos de entrenamiento
+# Estimando y usando los datos de test
 y_hat = mod.predict(X_test)
 
 # Para ver algunas medidas de desempeño

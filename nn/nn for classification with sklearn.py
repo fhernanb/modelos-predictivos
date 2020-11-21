@@ -6,11 +6,13 @@ Created on Wed Nov 11 15:29:45 2020
 """
 
 """
+En este ejemplo se muestra como usar nn para clasificación.
+
 La base de datos que vamos a usar en este ejemplo está disponible en el 
 UCI Repository. El objetivo es crear una red neuronal para predecir 
 la variable Y (target) definida como:
-Y=1 (presence heart disease) si target es 1, 2, 3 o 4
-Y=0 (absence heart disease) si target es 0
+Y = 1 (presence heart disease) si target es 1, 2, 3 o 4
+Y = 0 (absence heart disease) si target es 0
 """
 
 # Librerías a usar
@@ -67,12 +69,13 @@ X_train, X_test, y_train, y_test = train_test_split(scaledX, y,
 pd.crosstab(index=y_train, columns="Numero")
 pd.crosstab(index=y_test,  columns="Numero")
 
-# Creando nn -----------------------------------------------------------------
+# Creando el modelo de interés ------------------------------------------------
 
-# Para detalles sobre la función visitar:
+# Para detalles sobre la función que vamos a usar visite:
 import webbrowser
 webbrowser.open('https://tinyurl.com/y6fx277s')
 
+# Para definir el modelo
 mod = MLPClassifier(solver='adam', 
                     max_iter=1500,
                     alpha=1e-5,
@@ -81,9 +84,10 @@ mod = MLPClassifier(solver='adam',
                     learning_rate='adaptive',
                     random_state=1)
 
+# Para entrenar el modelo
 mod.fit(X_train, y_train)
 
-# Estimando y usando los datos de entrenamiento
+# Estimando y usando los datos de test
 y_hat = mod.predict(X_test)
 
 # Matriz de confusión
