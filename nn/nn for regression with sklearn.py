@@ -6,10 +6,10 @@ Created on Wed Nov 11 15:29:45 2020
 """
 
 """
-En este ejemplo se muestra como usar nn para regresion.
+En este ejemplo se muestra como usar neural networks para regresion.
 
-El ejemplo esta basado en http://uc-r.github.io/ann_regression
-Los datos del ejemplo están disponibles en un repositorio de github.
+El ejemplo esta basado en http://uc-r.github.io/ann_regression y
+los datos del ejemplo están disponibles en un repositorio de github.
 """
 
 # Librerías a usar

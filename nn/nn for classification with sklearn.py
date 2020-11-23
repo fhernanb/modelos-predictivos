@@ -6,9 +6,9 @@ Created on Wed Nov 11 15:29:45 2020
 """
 
 """
-En este ejemplo se muestra como usar nn para clasificación.
+En este ejemplo se muestra como crear neural networks para clasificación.
 
-La base de datos que vamos a usar en este ejemplo está disponible en el 
+La base de datos que vamos a usar en este ejemplo está disponibles en el 
 UCI Repository. El objetivo es crear una red neuronal para predecir 
 la variable Y (target) definida como:
 Y = 1 (presence heart disease) si target es 1, 2, 3 o 4

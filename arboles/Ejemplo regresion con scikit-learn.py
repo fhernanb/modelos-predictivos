@@ -6,7 +6,7 @@ Created on Thu Nov 12 08:22:27 2020
 """
 
 """
-En este ejemplo se busca encontrar un modelo de regresion que explique 
+En este ejemplo se desea crea un árbol de regresion que explique 
 la variable respuesta y en función de las covariables x1 a x11. los datos 
 provienen del ejercicio 9.5 del libro de Montgomery, Peck and Vining (2003).
 El paquete MPV (Braun 2019) contiene todos los datos que acompañan al libro.
@@ -34,12 +34,19 @@ datos = datos.dropna()
 X = datos[['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11']]
 y = datos["y"]
 
-# Creando el modelo arbol --------------------------------------------------
-# Vamos a crear dos modelos alternativos
+# Creando el modelo de interés ------------------------------------------------
 
+# Para detalles sobre la función que vamos a usar visite:
+import webbrowser
+webbrowser.open('https://tinyurl.com/y6rwb6y5')
+
+# Vamos a crear dos modelos alternativos:
+
+# Para definir los modelos
 mod1 = DecisionTreeRegressor(criterion='mse', max_depth=2, random_state=0)
 mod2 = DecisionTreeRegressor(criterion='mse', max_depth=5, random_state=0)
 
+# Para entrenar los modelos
 mod1.fit(X, y)
 mod2.fit(X, y)
 

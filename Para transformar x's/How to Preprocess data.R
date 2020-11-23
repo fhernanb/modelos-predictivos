@@ -6,7 +6,7 @@
 library(caret)
 
 # Vamos a generar n valores para crear una base de datos artificial
-n <- 100
+n <- 1000
 x1 <- rpois(n, lambda=5)
 x2 <- rbinom(n, size=6, prob=0.4)
 y <- rnorm(n, mean=-3+2*x1+4*x2, sd=3)
@@ -43,7 +43,7 @@ funcioncita <- function(x) c(Minimo=min(x),
 apply(X=dat_train, MARGIN=2, FUN=funcioncita)
 apply(X=dat_train_transf, MARGIN=2, FUN=funcioncita)
 apply(X=dat_test_transf, MARGIN=2, FUN=funcioncita) 
-# Por que no coinciden los resultados
+# Por que no coinciden los resultados?
 
 # Preprocessing to -3 to 3 ------------------------------------------------
 preProcValues <- preProcess(dat_train, method=c("center", "scale"))

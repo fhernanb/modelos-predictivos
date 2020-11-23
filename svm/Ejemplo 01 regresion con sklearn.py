@@ -5,10 +5,10 @@ Created on Wed Nov 11 18:16:49 2020
 @author: fhernanb
 """
 
-# -------------------------------------------------------------------------
-# En este ejemplo se usan datos artificiales (simulados) para mostrar
-# el uso de svm en regresion
-# -------------------------------------------------------------------------
+"""
+En este ejemplo se usan datos artificiales (simulados) para mostrar
+el uso de svm en regresion.
+"""
 
 # Librerías a usar
 import pandas as pd
@@ -32,11 +32,16 @@ plt.title('Diagrama de dispersión con 2 variables');
 X = datos["x"]
 y = datos["y"]
 
-# El siguiente paso se debe hacer porque solo tenemos una covariable
+# El siguiente paso se debe hacer porque solo tenemos UNA covariable,
 # en el caso de varias no es necesario usar la siguiente instrucción.
 X = X.values.reshape((-1, 1))
 
 # Creando el modelo svm con kernel lineal ---------------------------------
+
+# Para detalles sobre la función que vamos a usar visite:
+import webbrowser
+webbrowser.open('https://tinyurl.com/y3aa67tn')
+
 mod_lin = svm.SVR(C=1.0, epsilon=0.1, degree=1, kernel='linear')
 mod_lin.fit(X, y)
 
