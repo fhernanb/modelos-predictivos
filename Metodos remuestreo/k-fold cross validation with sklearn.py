@@ -17,10 +17,10 @@ Metrica a usar: rmse
 # Librerías a usar
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn import metrics
-from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 
 # Los datos a usar estan disponibles en un repositorio de github
@@ -44,9 +44,8 @@ k = 10
 kf = KFold(n_splits=k, shuffle=False)
 kf.split(X)  
 
-# Creando los modelos
-
-# Initialize the accuracy of the models to blank list. The accuracy of each model will be appended to this list
+# Initialize the scores of the models to blank list. 
+# The score of each model will be appended to this list
 scores = []
 
 for train_index, test_index in kf.split(X):
@@ -61,6 +60,7 @@ for train_index, test_index in kf.split(X):
     rsme = np.sqrt(mse)
     scores.append(rsme)
 
+# Para ver los resultados
 scores
 
 # Para ver la media
@@ -68,3 +68,9 @@ np.mean(scores)
 
 # Para ver la varianza
 np.var(scores)
+
+# Para dibujar los scores
+sns.distplot(scores, kde=True, hist=False, rug=True, color='green')
+
+
+
