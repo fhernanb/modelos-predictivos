@@ -8,6 +8,18 @@ library(MLmetrics)
 # Para obtener ayuda sobre la funcion
 help(cohen.kappa)
 
+
+# Ejemplo de sklearn ------------------------------------------------------
+
+# Creando los datos
+y_pred <- c(0, 2, 1, 3)
+y_true <- c(0, 1, 2, 3)
+
+# Calculando accuracy y kappa
+Accuracy(y_true, y_pred)
+cohen.kappa(cbind(y_true, y_pred))
+
+
 # Ejemplo 1 de Wikipedia --------------------------------------------------
 
 # Creando la tabla como una matriz
@@ -47,8 +59,7 @@ cohen.kappa(tabla)
 
 # Ejemplo -----------------------------------------------------------------
 
-fit <- glm(formula = vs ~ hp + wt,
-              family=binomial(link="logit"), data=mtcars)
+fit <- glm(vs ~ hp + wt, family=binomial(link="logit"), data=mtcars)
 
 pred <- ifelse(fit$fitted.values < 0.5, 0, 1)
 y <- mtcars$vs
