@@ -25,7 +25,7 @@ from sklearn.model_selection import GridSearchCV
 # Primera parte --------------------------------------------------------------
 
 # define dataset
-X, y = make_classification(n_samples=1000, n_features=20, 
+X, y = make_classification(n_samples=100, n_features=20, 
                            n_informative=15, n_redundant=5, 
                            random_state=7)
 
@@ -36,35 +36,42 @@ model = XGBClassifier()
 cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
 n_scores = cross_val_score(model, X, y, scoring='accuracy', 
                            cv=cv, n_jobs=-1)
+
 # report performance
-print('Accuracy: %.3f (%.3f)' % (mean(n_scores), std(n_scores)))
+print('Mean (and sd) of Accuracy: %.3f (%.3f)' % (mean(n_scores), 
+                                         std(n_scores)))
 
 # Segunda parte ---------------------------------------------------------------
 
-estimator = XGBClassifier(
-    objective= 'binary:logistic',
-    nthread=4,
-    seed=42
-)
-
-parameters = {
+# defining parameter range 
+param_grid = {
     'max_depth': range (2, 10, 1),
     'n_estimators': range(60, 220, 40),
     'learning_rate': [0.1, 0.01, 0.05]
 }
 
-grid_search = GridSearchCV(
-    estimator=estimator,
-    param_grid=parameters,
-    scoring = 'roc_auc',
-    n_jobs = 10,
-    cv = 10,
-    verbose=True
-)
+# Creando el modelo
+model = XGBClassifier(objective='binary:logistic',
+                      nthread=4, seed=42)
 
-grid_search.fit(X, y)
+grid = GridSearchCV(estimator=model,
+                    param_grid=param_grid,
+                    scoring = 'roc_auc',
+                    n_jobs = 10,
+                    cv = 10,
+                    verbose=True)
 
-grid_search.best_estimator_
+# fitting the model for grid search 
+grid.fit(X, y)
+
+# print best parameter after tuning 
+print(grid.best_params_) 
+  
+# print how our model looks after hyper-parameter tuning 
+print(grid.best_estimator_) 
+
+# Predictions with the best hyper-param combination
+y_hat = grid.predict(X)
 
 
 

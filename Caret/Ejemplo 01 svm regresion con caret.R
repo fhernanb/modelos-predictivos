@@ -49,6 +49,18 @@ plot(fit1)
 # To explore the best model
 fit1$bestTune
 
+# To explore the RMSE for each fold
+fit1$resample
+
+# To split results for each fold
+my_fold <- fit1$resample$Resample
+my_fold <- substr(x=my_fold, start=1, stop=6)
+fit1$resample$Resample <- my_fold
+
+resul <- split(x=fit1$resample[, -4], f=my_fold, drop=TRUE)
+resul
+
+t(sapply(X=resul, FUN=colMeans))
 
 # usando un grid mas fino -------------------------------------------------
 

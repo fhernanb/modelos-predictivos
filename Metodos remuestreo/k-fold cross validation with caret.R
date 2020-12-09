@@ -25,7 +25,7 @@ folds <- rep(1:10, each=39)
 # Vamos a usar solo las obs 1 a 390, las ultimas dos NO!!!
 datos <- Auto[1:390, ]
 
-# Vectro vacio para almacernar los rmse
+# Vector vacio para almacernar los rmse
 rmse <- numeric(10)
 
 # Vamos a recorrer los folds y calcular la medida
