@@ -2,6 +2,8 @@
 # En este ejemplo vamos a utilizar la base de datos Cars93
 # del paquete MASS para estimar el precio del auto en funcion del
 # peso y del rendimiento del combustible
+
+# Se usaran dos paquetes, kknn y FNN, para entrenar los modelos
 # -------------------------------------------------------------------------
 
 # Los datos que vamos a usar
@@ -66,7 +68,8 @@ library(kknn)
 # train.kknn sirve para dos cosas:
 # 1) para ajustar el modelo y
 # 2) para encontrar los hiperparametros.
-# En este ejemplo NOOO vamos a sintonizar hiper-parametros
+# En este ejemplo NOOO vamos a sintonizar hiper-parametros, solo a entrenar
+
 fit2 <- train.kknn(Price ~ Weight + MPG.city,
                    data=Cars93[i_train, ],
                    distance=2,

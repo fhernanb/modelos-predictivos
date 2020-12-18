@@ -26,8 +26,10 @@ library(kknn)
 fit1 <- train.kknn(Price ~ Weight + MPG.city,
                    data=Cars93,
                    kmax=70,
-                   kernel = c("rectangular", "gaussian", 
-                              "rank", "optimal"),
+                   kernel = c("rectangular", 
+                              "gaussian", 
+                              "rank", 
+                              "optimal"),
                    scale=TRUE)
 
 # Para ver el modelo ajustado

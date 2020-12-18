@@ -4,7 +4,6 @@
 # peso y del rendimiento del combustible
 # -------------------------------------------------------------------------
 
-
 # Los datos que vamos a usar
 library(MASS)
 head(Cars93)

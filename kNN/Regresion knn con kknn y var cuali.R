@@ -1,7 +1,9 @@
 # -------------------------------------------------------------------------
 # En este ejemplo vamos a utilizar la base de datos Cars93
 # del paquete MASS para estimar el precio del auto en funcion del
-# AirBags, DriveTrain y Origin
+# AirBags, DriveTrain y Origin.
+#
+# Vamos a usar variables cualitativas
 # -------------------------------------------------------------------------
 
 # Los datos que vamos a usar
@@ -20,19 +22,19 @@ with(Cars93, plot(Price ~ Origin))
 # Particion de los datos, vamos a usar aprox 60% y 40% para train y test
 i_train <- sample(1:93, size=60)
 
-train_data <- Cars93[i_train, ] # 60 obs
-test_data <- Cars93[-i_train, ] # 33 obs
+train_data <- Cars93[ i_train, ] # 60 obs
+test_data  <- Cars93[-i_train, ] # 33 obs
 
 # Usando el paquete kknn --------------------------------------------------
 library(kknn)
 
-# train.kknn sirve para ajustar el modelo y 
-# sirve encontrar los hiperparametros simulataneamente.
+# train.kknn sirve para entrenar el modelo y tambien
+# sirve encontrar los hiperparametros. Aqui vamos a entrenar solamente.
 fit1 <- train.kknn(Price ~ AirBags + DriveTrain + Origin,
                    data=train_data,
                    distance=3,
                    kmax=2,
-                   kernel="gaussian",
+                   kernel="rectangular",
                    scale=TRUE)
 
 # Para ver la clase del objeto
@@ -48,8 +50,9 @@ y_true_train <- train_data$Price
 # Para explorar las estimaciones
 y_hat1 <- predict(fit1, newdata=train_data)
 
-# Para ver el ECM
-mean((y_true_train - y_hat1)^2)
+# Para ver el ECM y R2
+MLmetrics::R2_Score(y_pred=y_hat1, y_true=y_true_train)
+MLmetrics::MSE(y_pred=y_hat1, y_true=y_true_train)
 
 # Para ver la correlacion
 cor(y_true_train, y_hat1)
@@ -64,8 +67,9 @@ y_true_test <- test_data$Price
 # Para explorar las estimaciones
 y_hat2 <- predict(fit1, newdata=test_data)
 
-# Para ver el ECM
-mean((y_true_test - y_hat2)^2)
+# Para ver el ECM y R2
+MLmetrics::R2_Score(y_pred=y_hat2, y_true=y_true_test)
+MLmetrics::MSE(y_pred=y_hat2, y_true=y_true_test)
 
 # Para ver la correlacion
 cor(y_true_test, y_hat2)
