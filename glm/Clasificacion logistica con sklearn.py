@@ -2,7 +2,7 @@
 """
 Created on Fri Dec 18 15:27:17 2020
 
-@author: fhern
+@author: fhernanb
 """
 
 """
@@ -15,7 +15,7 @@ Pclass, Sex, Age y Fare.
 import pandas as pd
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
+import statsmodels.api as sm
 
 # Los datos a usar estan disponibles en un repositorio de github
 file = "https://raw.githubusercontent.com/fhernanb/datos/master/titanic.csv"
@@ -45,20 +45,17 @@ datos_dum.head
 y = datos_dum["Survived"]
 X = datos_dum.drop('Survived', axis=1)
 
-# Creando train y test
-X_train, X_test, y_train, y_test = train_test_split(X, y, 
-                                                    test_size=0.20, 
-                                                    random_state=123)
 
-# Creando el modelo de interés ------------------------------------------------
+# Utilizando sklearn -----------------------------------------------
 
 # Para definir el modelo
-mod = LogisticRegression(fit_intercept=True,
-                         solver='liblinear',
+mod = LogisticRegression(penalty='none',
+                         fit_intercept=True,
+                         solver='lbfgs',
                          max_iter=170)
 
 # Para entrenar el modelo
-mod.fit(X_train, y_train)
+mod.fit(X, y)
 
 # Para ver el número de iteraciones
 mod.n_iter_
@@ -68,20 +65,19 @@ mod.intercept_
 mod.coef_
 
 # Para ver las probabilidades
-proba = mod.predict_proba(X_train)
+proba = mod.predict_proba(X)
 proba[0:5, ] # las primeras cinco probabilidades
 
 # Para obtener las estimaciones
-y_hat = mod.predict(X_test)
+y_hat = mod.predict(X)
 y_hat[0:5]
 
 # Utilizando statmodels ---------------------------------------------
-import statsmodels.api as sm
 
 # Vamos a agregar la columna de 1 al inicio para intercepto
-X_train = sm.add_constant(X_train)
+X_train = sm.add_constant(X)
 
-mod2 = sm.Logit(y_train, X_train)
+mod2 = sm.Logit(y, X_train)
 result = mod2.fit()
 
 # printing the summary table 

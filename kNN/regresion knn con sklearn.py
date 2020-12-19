@@ -23,7 +23,6 @@ file = "https://raw.githubusercontent.com/fhernanb/datos/master/Cars93_MASS.txt"
 datos = pd.read_csv(file, comment='#', delimiter='\t')
 datos.head()
 
-
 # Vamos a seleccionar las variables de interes
 datos = datos[["Price",
                "AirBags",
