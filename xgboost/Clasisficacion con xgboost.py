@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Dec 18 15:27:17 2020
+Created on Mon Dec 28 05:47:02 2020
 
 @author: fhernanb
 """
@@ -14,8 +14,8 @@ Pclass, Sex, Age y Fare.
 # Librerías a usar
 import pandas as pd
 
-from sklearn.linear_model import LogisticRegression
-import statsmodels.api as sm
+from sklearn import metrics
+from xgboost import XGBClassifier
 
 # Los datos a usar estan disponibles en un repositorio de github
 file = "https://raw.githubusercontent.com/fhernanb/datos/master/titanic.csv"
@@ -45,47 +45,27 @@ datos_dum.head
 y = datos_dum["Survived"]
 X = datos_dum.drop('Survived', axis=1)
 
-
-# Utilizando sklearn -----------------------------------------------
+# Creando el modelo de interés ------------------------------------------------
 
 # Para definir el modelo
-mod = LogisticRegression(penalty='l1',
-                         fit_intercept=True,
-                         #solver='liblinear',
-                         max_iter=256)
+model = XGBClassifier()
 
 # Para entrenar el modelo
-mod.fit(X, y)
+model.fit(X, y)
 
-# Para ver el número de iteraciones
-mod.n_iter_
+# Estimando y usando los datos de train --------------
+y_hat = model.predict(X)
 
-# Para obtener los parametros
-mod.intercept_
-mod.coef_
+# Confusion matrix
+cm = metrics.confusion_matrix(y, y_hat)
+print(cm)
 
-# Para ver las probabilidades
-proba = mod.predict_proba(X)
-proba[0:5, ] # las primeras cinco probabilidades
+# Para ver algunas medidas de desempeno
+accu = metrics.accuracy_score(y_true=y, y_pred=y_hat)
+print("El valor de accuracy es ", accu)
+kappa = metrics.cohen_kappa_score(y, y_hat)
+print("El valor de Kappa es ", kappa)
 
-# Para obtener las estimaciones
-y_hat = mod.predict(X)
-y_hat[0:5]
-
-# Utilizando statmodels ---------------------------------------------
-
-# Vamos a agregar la columna de 1 al inicio para intercepto
-X_train = sm.add_constant(X)
-
-mod2 = sm.Logit(y, X_train)
-result = mod2.fit()
-
-# printing the summary table 
-result.summary()
-
-# Para ver los coeficientes
-coefficients = result.params
-coefficients
 
 
 
