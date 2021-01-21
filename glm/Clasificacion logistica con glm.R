@@ -26,5 +26,9 @@ summary(mod1)
 # Valor de log-verosimilitud
 logLik(mod1)
 
+# Volvamos a ajustar el modelo sin Fare
+mod2 <- update(mod1, . ~ . - Fare)
+
+summary(mod2)
 
 
