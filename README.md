@@ -1,2 +1,5 @@
-# modelos-predictivos
-Repositorio con códigos de R y Python para Modelos Predictivos
+# Modelos predictivos
+Repositorio con códigos de R y Python para la asignatura
+Modelos Predictivos
+
+![](cabezote.png)

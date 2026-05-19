@@ -32,8 +32,8 @@ head(datos)
 library(scatterplot3d)
 scatterplot3d(x=datos$x1, y=datos$x2, z=datos$y, 
               pch=16, cex.lab=1,
-              highlight.3d=TRUE, type="h", xlab='x1',
-              ylab='x2', zlab='y')
+              highlight.3d=TRUE, type="h", xlab="x1",
+              ylab="x2", zlab="y")
 
 
 # Transformando los datos -------------------------------------------------
@@ -41,7 +41,7 @@ scatterplot3d(x=datos$x1, y=datos$x2, z=datos$y,
 # Vamos a usar una transformacion al intervalo (0, 1).
 # A usted le queda de tarea probar con una transformacion (-1, 1)
 
-scale01 <- function(x){
+scale01 <- function(x) {
   (x - min(x)) / (max(x) - min(x))
 }
 
@@ -72,7 +72,7 @@ mod1 <- neuralnet(y ~ x1 + x2, data=datis,
                   act.fct="logistic")
 
 # Dibujando la red entrenada
-plot(mod1, rep = 'best')
+plot(mod1, rep = "best")
 
 # Para conocer la clase del objeto mod1
 class(mod1)
