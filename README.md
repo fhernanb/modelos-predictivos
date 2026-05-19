@@ -3,4 +3,5 @@ Repositorio con códigos de R y Python para la asignatura
 Modelos Predictivos
 
 ![](cabezote.png)
-![](logo_unal.png)
+
+<img src="logo_unal.png" width="400" height="225" alt="Logo">
