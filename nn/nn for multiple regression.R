@@ -27,14 +27,12 @@ datos <- read.table("https://raw.githubusercontent.com/fhernanb/datos/master/dat
                     header=TRUE)
 head(datos)
 
-
 # Visualizando los datos --------------------------------------------------
 library(scatterplot3d)
 scatterplot3d(x=datos$x1, y=datos$x2, z=datos$y, 
               pch=16, cex.lab=1,
               highlight.3d=TRUE, type="h", xlab="x1",
               ylab="x2", zlab="y")
-
 
 # Transformando los datos -------------------------------------------------
 
@@ -91,7 +89,16 @@ a <- mod1$weights[[1]][[1]][2, 1] * datis[k, 2] +
   mod1$weights[[1]][[1]][3, 1] * datis[k, 3] +
   mod1$weights[[1]][[1]][1, 1]
 
+a
+
+# Como la red neuronal se creo con funcion de activacion logistica
+# yo debo usar la inversa de ella para obtener los resultados, como en glm binom
+# f(x) = exp(x) / (1 + exp(x))
+# La funcion la tome de https://en.wikipedia.org/wiki/Logit
+
 b <- exp(a) / (1 + exp(a))
+
+b
 
 b * mod1$weights[[1]][[2]][2, 1] + mod1$weights[[1]][[2]][1, 1]
 
@@ -105,11 +112,13 @@ yhat1 <- predict(mod1, newdata=datis)
 sum((datis$y - yhat1)^2) / 2
 
 # Explorando las predicciones en el mundo transformado
-par(mfrow=c(1, 2))
+par(mfrow=c(1, 2), mai=c(1, 1, 1, 1) + 0.1)
 
 plot(x=datis$y, y=yhat1, las=1, xlab="y_t", 
      main="Transformed world")
 abline(a=0, b=1, col="dodgerblue2", lwd=2)
+
+# Correlacion entre y and y_hat
 cor(x=datis[, 1], y=yhat1)
 
 # Explorando las predicciones en el mundo normal (no transf)
@@ -118,6 +127,8 @@ yhat1_nt <- yhat1 * (max(datos$y) - min(datos$y)) + min(datos$y)
 plot(x=datos$y, y=yhat1_nt, las=1, xlab="y",
      main="Real world")
 abline(a=0, b=1, col="dodgerblue2", lwd=2)
+
+# Correlacion entre y and y_hat
 cor(x=datos$y, y=yhat1_nt)
 
 # Tarea: saque al menos UNA conclusion de este ejemplo.
@@ -213,7 +224,9 @@ plot(x=datis$y, y=yhat2, las=1, xlab="y_t",
 # Para ver la importancia de las variables en la red usamos
 library(NeuralNetTools)
 garson(mod2) # Garson (1991). Interpreting neural network connection weights
-olden(mod2)  # Olden et al (2002). Illuminating the ’black-box’
+olden(mod2)  # Olden et al (2002). Illuminating the "black-box"
+
+# Nota: ohhh, de esa manera podemos saber si una X es importante y que tan imp.
 
 
 # Comparando los MSE ------------------------------------------------------
