@@ -36,33 +36,48 @@ scatterplot3d(x=datos$x1, y=datos$x2, z=datos$y,
 
 # Transformando los datos -------------------------------------------------
 
-# Vamos a usar una transformacion al intervalo (0, 1).
+# Vamos a usar una transformacion al intervalo (0, 1) para
+# transformar todas las variables Y y X's simultaneamente.
+# La formula para transformar a (0, 1) es:
+# (x - min(x)) / (max(x) - min(x))
+# y la formula inversa es: 
+# x * (max(x) - min(x)) + min(x)
+
 # A usted le queda de tarea probar con una transformacion (-1, 1)
 
-scale01 <- function(x) {
-  (x - min(x)) / (max(x) - min(x))
-}
+library(recipes)
 
-library(dplyr)
-datis <- datos %>% mutate_all(scale01) # scaled data
+# 1. Creando mi receta (recipe) para transformar
+my_recipe <- recipe(y ~ x1 + x2, data=datos) |>
+  step_range(all_numeric(), min=0, max=1)
+
+# 2. Preparando la recepta con prep
+trained_recipe <- prep(my_recipe, training=datos)
+
+# 3. Horneando la receta para obtener los datos escalados
+datos_transf <- bake(trained_recipe, new_data=datos)
+datos_transf
 
 # Vamos a explorar la media y varianza de los datos sin/con transformacion
 # pero vamos a crear una funcioncita para esto.
 funcioncita <- function(x) c(Minimo=min(x), 
-                             Media=mean(x), Mediana=median(x),
-                             Desvi=sd(x), Vari=var(x), 
+                             Media=mean(x), 
+                             Mediana=median(x),
+                             Desvi=sd(x), 
+                             Vari=var(x), 
                              Maximo=max(x))
 
-apply(datos, MARGIN=2, FUN=funcioncita) # sin transf
-apply(datis, MARGIN=2, FUN=funcioncita) # con transf
+apply(datos,        MARGIN=2, FUN=funcioncita) # sin transformar
+apply(datos_transf, MARGIN=2, FUN=funcioncita) # con transformacion
 
 # Ajustado el modelo con neuralnet ----------------------------------------
 
 # Vamos a crear una red con 1 sola capa interna y 1 sola neurona
-# funcion de activacion logistica
+# funcion de activacion logistica y otras caracteristica
 
 library(neuralnet)
-mod1 <- neuralnet(y ~ x1 + x2, data=datis,
+set.seed(1267)
+mod1 <- neuralnet(y ~ x1 + x2, data=datos_transf,
                   hidden=c(1),
                   rep=1,
                   algorithm="rprop+",
@@ -83,10 +98,10 @@ mod1$weights
 
 # Haciendo predicciones manuales para la observacion k-esima
 k <- 5
-datis[k, ] # primera linea
+datos_transf[k, ] # primera linea
 
-a <- mod1$weights[[1]][[1]][2, 1] * datis[k, 2] + 
-  mod1$weights[[1]][[1]][3, 1] * datis[k, 3] +
+a <- mod1$weights[[1]][[1]][2, 1] * datos_transf[k, "x1"] + 
+  mod1$weights[[1]][[1]][3, 1] * datos_transf[k, "x2"] +
   mod1$weights[[1]][[1]][1, 1]
 
 a
@@ -103,27 +118,25 @@ b
 b * mod1$weights[[1]][[2]][2, 1] + mod1$weights[[1]][[2]][1, 1]
 
 # Haciendo las predicciones automaticamente
-predict(mod1, newdata=datis[k ,]) # igual al manual
+predict(mod1, newdata=datos_transf[k ,]) # igual al manual
 
 # Creando un vector con todas las predicciones usando los datos transf
-yhat1 <- predict(mod1, newdata=datis)
-
-# Calculando el error
-sum((datis$y - yhat1)^2) / 2
+yhat1 <- predict(mod1, newdata=datos_transf)
 
 # Explorando las predicciones en el mundo transformado
 par(mfrow=c(1, 2), mai=c(1, 1, 1, 1) + 0.1)
 
-plot(x=datis$y, y=yhat1, las=1, xlab="y_t", 
+plot(x=datos_transf$y, y=yhat1, las=1, xlab="y_t", 
      main="Transformed world")
 abline(a=0, b=1, col="dodgerblue2", lwd=2)
 
 # Correlacion entre y and y_hat
-cor(x=datis[, 1], y=yhat1)
+cor(x=datos_transf$y, y=yhat1)
 
 # Explorando las predicciones en el mundo normal (no transf)
 # Debemos usar la transformada inversa
 yhat1_nt <- yhat1 * (max(datos$y) - min(datos$y)) + min(datos$y)
+
 plot(x=datos$y, y=yhat1_nt, las=1, xlab="y",
      main="Real world")
 abline(a=0, b=1, col="dodgerblue2", lwd=2)
@@ -131,18 +144,25 @@ abline(a=0, b=1, col="dodgerblue2", lwd=2)
 # Correlacion entre y and y_hat
 cor(x=datos$y, y=yhat1_nt)
 
-# Tarea: saque al menos UNA conclusion de este ejemplo.
+# Calculando el MSE
+library(yardstick)
+mse_vec(truth=datos$y, estimate=as.numeric(yhat1_nt))
 
+# ------------------------------------------------------------------------
+# Tarea: saque al menos UNA conclusion de este ejemplo.
+# ------------------------------------------------------------------------
 
 # Ajustando el modelo con lm ----------------------------------------------
 
 # Ahora vamos a ajustar el modelo usando lm 
+# para comparar los resultados de nn con lm
 
 mod_lm <- lm(y ~ x1 + x2, data=datos)
 yhat_lm <- predict(mod_lm)
 
 # Calculando el MSE
-sum((datos$y - yhat_lm)^2) / 2 # Depende de las unidade de Y
+library(yardstick)
+mse_vec(truth=datos$y, estimate=yhat_lm)
 
 # Comparando modelo nn y lm -----------------------------------------------
 cor(x=datos$y, y=yhat1_nt)
@@ -151,10 +171,10 @@ cor(x=datos$y, y=yhat_lm)
 par(mfrow=c(1, 2))
 
 plot(x=datos$y, y=yhat1_nt, las=1, xlab="y", main="With nn")
-abline(a=0, b=1, col="tomato", lwd=2)
+abline(a=0, b=1, col="darkgreen", lwd=2)
 
 plot(x=datos$y, y=yhat_lm, las=1, xlab="y", main="With lm")
-abline(a=0, b=1, col="tomato", lwd=2)
+abline(a=0, b=1, col="orange", lwd=2)
 
 par(mfrow=c(1, 1))
 
@@ -162,7 +182,9 @@ par(mfrow=c(1, 1))
 
 # Variable importance -----------------------------------------------------
 
-# Para ver la importancia de las variables en la red usamos
+# Para ver la importancia de las variables en la red usaremos el 
+# paquete NeuralNetTools.
+
 library(NeuralNetTools)
 
 garson(mod1) # Garson (1991). Interpreting neural network connection weights
@@ -185,7 +207,7 @@ box()
 # Nota: nnet solo permite UNA capa
 
 library(nnet)
-mod2 <- nnet(y ~ x1 + x2, data=datis,
+mod2 <- nnet(y ~ x1 + x2, data=datos_transf,
              size=1,
              softmax=FALSE,
              maxit=1000)
@@ -205,18 +227,18 @@ mod2$wts
 # Tarea: por que no son igualitos los pesos de ambas redes?
 
 # Creando un vector con todas las predicciones usando los datos transf
-yhat2 <- predict(mod2, newdata=datis)
+yhat2 <- predict(mod2, newdata=datos_transf)
 
 # Calculando el error
-sum((datis$y - yhat2)^2) / 2
+sum((datos_transf$y - yhat2)^2) / 2
 
 # Explorando las predicciones con ambas redes
 par(mfrow=c(1, 2))
 
-plot(x=datis$y, y=yhat1, las=1, xlab="y_t", 
+plot(x=datos_transf$y, y=yhat1, las=1, xlab="y_t", 
      main="Using neuralnet")
 
-plot(x=datis$y, y=yhat2, las=1, xlab="y_t", 
+plot(x=datos_transf$y, y=yhat2, las=1, xlab="y_t", 
      main="Using nnet")
 
 # Tarea: Saque una conclusion del ejercicio.
@@ -231,8 +253,8 @@ olden(mod2)  # Olden et al (2002). Illuminating the "black-box"
 
 # Comparando los MSE ------------------------------------------------------
 
-mse_neuralnet <- mean((datis$y - yhat1)^2)
-mse_nn <- mean((datis$y - yhat2)^2)
+mse_neuralnet <- mean((datos_transf$y - yhat1)^2)
+mse_nn <- mean((datos_transf$y - yhat2)^2)
 
 cbind(mse_neuralnet, mse_nn)
 
