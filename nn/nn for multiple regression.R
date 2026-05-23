@@ -22,9 +22,9 @@ set.seed(1974)
 datos <- gen_dat(n=100)
 head(datos)
 
-# Los datos simulados estan disponibles tambien en la url de abajo.
-datos <- read.table("https://raw.githubusercontent.com/fhernanb/datos/master/datos_regresion_mult_redes.txt",
-                    header=TRUE)
+# Los datos simulados estan disponibles tambien en la url de abajo:
+url <- "https://raw.githubusercontent.com/fhernanb/datos/master/datos_regresion_mult_redes.txt"
+datos <- read.table(url, header=TRUE)
 head(datos)
 
 # Visualizando los datos --------------------------------------------------
@@ -70,7 +70,7 @@ funcioncita <- function(x) c(Minimo=min(x),
 apply(datos,        MARGIN=2, FUN=funcioncita) # sin transformar
 apply(datos_transf, MARGIN=2, FUN=funcioncita) # con transformacion
 
-# Ajustado el modelo con neuralnet ----------------------------------------
+# Ajustado el modelo con neuralnet ---------------------------------------------
 
 # Vamos a crear una red con 1 sola capa interna y 1 sola neurona
 # funcion de activacion logistica y otras caracteristica
@@ -121,52 +121,82 @@ b * mod1$weights[[1]][[2]][2, 1] + mod1$weights[[1]][[2]][1, 1]
 predict(mod1, newdata=datos_transf[k ,]) # igual al manual
 
 # Creando un vector con todas las predicciones usando los datos transf
-yhat1 <- predict(mod1, newdata=datos_transf)
+yhat1_transf <- predict(mod1, newdata=datos_transf)
+yhat1_transf <- as.vector(yhat1_transf) # para ver como vector
 
 # Explorando las predicciones en el mundo transformado
 par(mfrow=c(1, 2), mai=c(1, 1, 1, 1) + 0.1)
 
-plot(x=datos_transf$y, y=yhat1, las=1, xlab="y_t", 
+plot(x=datos_transf$y, y=yhat1_transf, las=1, xlab="y_transf", 
      main="Transformed world")
 abline(a=0, b=1, col="dodgerblue2", lwd=2)
 
 # Correlacion entre y and y_hat
-cor(x=datos_transf$y, y=yhat1)
+cor(x=datos_transf$y, y=yhat1_transf)
 
 # Explorando las predicciones en el mundo normal (no transf)
 # Debemos usar la transformada inversa
-yhat1_nt <- yhat1 * (max(datos$y) - min(datos$y)) + min(datos$y)
+yhat1 <- yhat1_transf * (max(datos$y) - min(datos$y)) + min(datos$y)
 
-plot(x=datos$y, y=yhat1_nt, las=1, xlab="y",
+plot(x=datos$y, y=yhat1, las=1, xlab="y",
      main="Real world")
-abline(a=0, b=1, col="dodgerblue2", lwd=2)
+abline(a=0, b=1, col="tomato", lwd=2)
 
 # Correlacion entre y and y_hat
-cor(x=datos$y, y=yhat1_nt)
+cor(x=datos$y, y=yhat1)
+
+# Tarea: saque al menos UNA conclusion de este ejemplo.
+
+# Ajustando el modelo con lm ---------------------------------------------------
+
+# Ahora vamos a ajustar el modelo usando lm solo para poder
+# comparar los resultados de nn con lm
+
+mod_lm <- lm(y ~ x1 + x2, data=datos)
+yhat_lm <- predict(mod_lm)
 
 # Calculando el MSE
 library(yardstick)
-mse_vec(truth=datos$y, estimate=as.numeric(yhat1_nt))
+mse_vec(truth=datos$y, estimate=yhat_lm)
+mse_vec(truth=datos$y, estimate=yhat1)
 
-# ------------------------------------------------------------------------
-# Tarea: saque al menos UNA conclusion de este ejemplo.
-# ------------------------------------------------------------------------
+# Cual modelo presenta el menor MSE?
 
-# Como obtener predicciones para nuevos casos usando nn?
+# Vamos a comparar graficamente las estimaciones con nn y lm
+par(mfrow=c(1, 2))
+
+plot(x=datos$y, y=yhat1, las=1, xlab="y", main="With nn")
+abline(a=0, b=1, col="darkgreen", lwd=2)
+
+plot(x=datos$y, y=yhat_lm, las=1, xlab="y", main="With lm")
+abline(a=0, b=1, col="orange", lwd=2)
+
+par(mfrow=c(1, 1))
+
+cor(x=datos$y, y=yhat1)
+cor(x=datos$y, y=yhat_lm)
+
+# Tarea: saque otra conclusion de este ejemplo.
+
+# ------------------------------------------------------------------------------
+# Como obtener predicciones de Y para nuevos casos usando nn???
 
 # Supongamos que queremos estimar Y para tres nuevos casos:
 # caso 1: x1=-2, x2=4
 # caso 2: x1= 0, x2=3
 # caso 3: x1= 1, x2=1
+
 # Para hacer la estimacion hacemos lo siguiente:
 
-# Transformar los datos
+# Creamos un nuevo dataframe con los nuevos datos, como no 
+# conocemos los valores de Y (obvio) le colocamos NA en la columna Y.
 new_data <- data.frame(x1=c(-2, 0, 1),
                        x2=c(4, 3, 1),
                        y=NA)
 
 new_data
 
+# Transformar los datos con la informacion almacenada en el objeto trained_recipe
 new_data_transf <- bake(trained_recipe, new_data=new_data)
 
 # Comparar los datos transformar y transformados
@@ -183,38 +213,11 @@ yhat_new <- yhat_new * (max(datos$y) - min(datos$y)) + min(datos$y)
 new_data$y <- yhat_new
 new_data
 
-# Ajustando el modelo con lm ----------------------------------------------
-
-# Ahora vamos a ajustar el modelo usando lm 
-# para comparar los resultados de nn con lm
-
-mod_lm <- lm(y ~ x1 + x2, data=datos)
-yhat_lm <- predict(mod_lm)
-
-# Calculando el MSE
-library(yardstick)
-mse_vec(truth=datos$y, estimate=yhat_lm)
-
-# Comparando modelo nn y lm -----------------------------------------------
-cor(x=datos$y, y=yhat1_nt)
-cor(x=datos$y, y=yhat_lm)
-
-par(mfrow=c(1, 2))
-
-plot(x=datos$y, y=yhat1_nt, las=1, xlab="y", main="With nn")
-abline(a=0, b=1, col="darkgreen", lwd=2)
-
-plot(x=datos$y, y=yhat_lm, las=1, xlab="y", main="With lm")
-abline(a=0, b=1, col="orange", lwd=2)
-
-par(mfrow=c(1, 1))
-
-# Tarea: saque otra conclusion de este ejemplo.
 
 # Variable importance -----------------------------------------------------
 
 # Para ver la importancia de las variables en la red usaremos el 
-# paquete NeuralNetTools.
+# paquete NeuralNetTools y aplicamos al objeto mod1 que es de clase nn
 
 library(NeuralNetTools)
 
@@ -238,6 +241,7 @@ box()
 # Nota: nnet solo permite UNA capa
 
 library(nnet)
+set.seed(2583)
 mod2 <- nnet(y ~ x1 + x2, data=datos_transf,
              size=1,
              softmax=FALSE,
@@ -258,19 +262,23 @@ mod2$wts
 # Tarea: por que no son igualitos los pesos de ambas redes?
 
 # Creando un vector con todas las predicciones usando los datos transf
-yhat2 <- predict(mod2, newdata=datos_transf)
-
-# Calculando el error
-sum((datos_transf$y - yhat2)^2) / 2
+yhat2_transf <- predict(mod2, newdata=datos_transf)
+yhat2_transf <- as.vector(yhat2_transf) # para ver como vector
+yhat2 <- yhat2_transf * (max(datos$y) - min(datos$y)) + min(datos$y)
 
 # Explorando las predicciones con ambas redes
 par(mfrow=c(1, 2))
 
-plot(x=datos_transf$y, y=yhat1, las=1, xlab="y_t", 
+plot(x=datos$y, y=yhat1, las=1, xlab="y", 
      main="Using neuralnet")
 
-plot(x=datos_transf$y, y=yhat2, las=1, xlab="y_t", 
+plot(x=datos$y, y=yhat2, las=1, xlab="y", 
      main="Using nnet")
+
+# Calculando el MSE
+library(yardstick)
+mse_vec(truth=datos$y, estimate=yhat1)
+mse_vec(truth=datos$y, estimate=yhat2)
 
 # Tarea: Saque una conclusion del ejercicio.
 
@@ -281,17 +289,9 @@ olden(mod2)  # Olden et al (2002). Illuminating the "black-box"
 
 # Nota: ohhh, de esa manera podemos saber si una X es importante y que tan imp.
 
-
-# Comparando los MSE ------------------------------------------------------
-
-mse_neuralnet <- mean((datos_transf$y - yhat1)^2)
-mse_nn <- mean((datos_transf$y - yhat2)^2)
-
-cbind(mse_neuralnet, mse_nn)
-
 # Tarea: volver a ajustar mod1 y mod2 pero modificando los otros 
 # argumentos de las funciones y cambiando la ARQUITECTURA de la red
-# para conseguir modelos con ERRORES menores a los mostrados aqui. 
+# para conseguir modelos con MSE menores a los mostrados aqui. 
 # Le apuesto que usted logra disminuir aun mas los MSE.
 
 
@@ -299,5 +299,4 @@ cbind(mse_neuralnet, mse_nn)
 
 par(mfrow=c(1, 2))
 plotnet(mod1)
-plotnet(mod2, circle_col="tomato", bord_col="blue", prune_col="red")
-
+plotnet(mod2)
