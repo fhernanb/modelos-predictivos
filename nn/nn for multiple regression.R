@@ -51,10 +51,10 @@ library(recipes)
 my_recipe <- recipe(y ~ x1 + x2, data=datos) |>
   step_range(all_numeric(), min=0, max=1)
 
-# 2. Preparando la recepta con prep
+# 2. Preparando la recepta con prep()
 trained_recipe <- prep(my_recipe, training=datos)
 
-# 3. Horneando la receta para obtener los datos escalados
+# 3. Horneando la receta con bake() para obtener los datos escalados
 datos_transf <- bake(trained_recipe, new_data=datos)
 datos_transf
 
@@ -151,6 +151,37 @@ mse_vec(truth=datos$y, estimate=as.numeric(yhat1_nt))
 # ------------------------------------------------------------------------
 # Tarea: saque al menos UNA conclusion de este ejemplo.
 # ------------------------------------------------------------------------
+
+# Como obtener predicciones para nuevos casos usando nn?
+
+# Supongamos que queremos estimar Y para tres nuevos casos:
+# caso 1: x1=-2, x2=4
+# caso 2: x1= 0, x2=3
+# caso 3: x1= 1, x2=1
+# Para hacer la estimacion hacemos lo siguiente:
+
+# Transformar los datos
+new_data <- data.frame(x1=c(-2, 0, 1),
+                       x2=c(4, 3, 1),
+                       y=NA)
+
+new_data
+
+new_data_transf <- bake(trained_recipe, new_data=new_data)
+
+# Comparar los datos transformar y transformados
+new_data
+new_data_transf
+
+# Hacer la prediccion
+yhat_new <- predict(mod1, newdata=new_data_transf)
+
+# Transformar la prediccion a la escala original de Y
+yhat_new <- yhat_new * (max(datos$y) - min(datos$y)) + min(datos$y)
+
+# Agregando la prediccion al dataframe nuevo
+new_data$y <- yhat_new
+new_data
 
 # Ajustando el modelo con lm ----------------------------------------------
 
