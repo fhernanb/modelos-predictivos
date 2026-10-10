@@ -1,6 +1,7 @@
 # -------------------------------------------------------------------------
 # En este ejemplo se muestra como usar nn para regresion.
 # El ejemplo esta basado en http://uc-r.github.io/ann_regression
+# https://deeplearningmath.org/resources/illustration-shallow-nn
 # Los datos del ejemplo se van a simular pero tambien estan disponibles
 # en un repositorio de github.
 # -------------------------------------------------------------------------
@@ -45,30 +46,11 @@ scatterplot3d(x=datos$x1, y=datos$x2, z=datos$y,
 
 # A usted le queda de tarea probar con una transformacion (-1, 1)
 
-library(recipes)
+maxs <- apply(datos, 2, max) 
+mins <- apply(datos, 2, min)
 
-# 1. Creando mi receta (recipe) para transformar
-my_recipe <- recipe(y ~ x1 + x2, data=datos) |>
-  step_range(all_numeric(), min=0, max=1)
-
-# 2. Preparando la recepta con prep()
-trained_recipe <- prep(my_recipe, training=datos)
-
-# 3. Horneando la receta con bake() para obtener los datos escalados
-datos_transf <- bake(trained_recipe, new_data=datos)
-datos_transf
-
-# Vamos a explorar la media y varianza de los datos sin/con transformacion
-# pero vamos a crear una funcioncita para esto.
-funcioncita <- function(x) c(Minimo=min(x), 
-                             Media=mean(x), 
-                             Mediana=median(x),
-                             Desvi=sd(x), 
-                             Vari=var(x), 
-                             Maximo=max(x))
-
-apply(datos,        MARGIN=2, FUN=funcioncita) # sin transformar
-apply(datos_transf, MARGIN=2, FUN=funcioncita) # con transformacion
+scaled_datos <- scale(datos, center=mins, scale=maxs-mins) # a matrix
+scaled_datos <- as.data.frame(scaled_datos) # a data frame
 
 # Ajustado el modelo con neuralnet ---------------------------------------------
 
@@ -77,7 +59,7 @@ apply(datos_transf, MARGIN=2, FUN=funcioncita) # con transformacion
 
 library(neuralnet)
 set.seed(1267)
-mod1 <- neuralnet(y ~ x1 + x2, data=datos_transf,
+mod1 <- neuralnet(y ~ x1 + x2, data=scaled_datos,
                   hidden=c(1),
                   rep=1,
                   algorithm="rprop+",
@@ -98,10 +80,10 @@ mod1$weights
 
 # Haciendo predicciones manuales para la observacion k-esima
 k <- 5
-datos_transf[k, ] # primera linea
+scaled_datos[k, ] # primera linea
 
-a <- mod1$weights[[1]][[1]][2, 1] * datos_transf[k, "x1"] + 
-  mod1$weights[[1]][[1]][3, 1] * datos_transf[k, "x2"] +
+a <- mod1$weights[[1]][[1]][2, 1] * scaled_datos[k, "x1"] + 
+  mod1$weights[[1]][[1]][3, 1] * scaled_datos[k, "x2"] +
   mod1$weights[[1]][[1]][1, 1]
 
 a
@@ -118,21 +100,21 @@ b
 b * mod1$weights[[1]][[2]][2, 1] + mod1$weights[[1]][[2]][1, 1]
 
 # Haciendo las predicciones automaticamente
-predict(mod1, newdata=datos_transf[k ,]) # igual al manual
+predict(mod1, newdata=scaled_datos[k ,]) # igual al manual
 
 # Creando un vector con todas las predicciones usando los datos transf
-yhat1_transf <- predict(mod1, newdata=datos_transf)
+yhat1_transf <- predict(mod1, newdata=scaled_datos)
 yhat1_transf <- as.vector(yhat1_transf) # para ver como vector
 
 # Explorando las predicciones en el mundo transformado
 par(mfrow=c(1, 2), mai=c(1, 1, 1, 1) + 0.1)
 
-plot(x=datos_transf$y, y=yhat1_transf, las=1, xlab="y_transf", 
+plot(x=scaled_datos$y, y=yhat1_transf, las=1, xlab="y_transf", 
      main="Transformed world")
 abline(a=0, b=1, col="dodgerblue2", lwd=2)
 
 # Correlacion entre y and y_hat
-cor(x=datos_transf$y, y=yhat1_transf)
+cor(x=scaled_datos$y, y=yhat1_transf)
 
 # Explorando las predicciones en el mundo normal (no transf)
 # Debemos usar la transformada inversa
@@ -242,7 +224,7 @@ box()
 
 library(nnet)
 set.seed(2583)
-mod2 <- nnet(y ~ x1 + x2, data=datos_transf,
+mod2 <- nnet(y ~ x1 + x2, data=scaled_datos,
              size=1,
              softmax=FALSE,
              maxit=1000)
@@ -262,7 +244,7 @@ mod2$wts
 # Tarea: por que no son igualitos los pesos de ambas redes?
 
 # Creando un vector con todas las predicciones usando los datos transf
-yhat2_transf <- predict(mod2, newdata=datos_transf)
+yhat2_transf <- predict(mod2, newdata=scaled_datos)
 yhat2_transf <- as.vector(yhat2_transf) # para ver como vector
 yhat2 <- yhat2_transf * (max(datos$y) - min(datos$y)) + min(datos$y)
 
