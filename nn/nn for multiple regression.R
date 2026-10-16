@@ -8,7 +8,7 @@
 
 # Simulando los datos -----------------------------------------------------
 # Vamos a usar datos simulados de un modelo
-# y ~ N(mu=4 - 3 * x1 + 3 * x2, sigma=6)
+# y ~ N(mu = 4 - 3 * x1 + 3 * x2, sigma = 6)
 
 gen_dat <- function(n) {
   x1 <- runif(n=n, min=-5, max=6)
@@ -28,38 +28,39 @@ url <- "https://raw.githubusercontent.com/fhernanb/datos/master/datos_regresion_
 datos <- read.table(url, header=TRUE)
 head(datos)
 
-# Visualizando los datos --------------------------------------------------
+# Visualizando los datos -------------------------------------------------------
 library(scatterplot3d)
 scatterplot3d(x=datos$x1, y=datos$x2, z=datos$y, 
               pch=16, cex.lab=1,
               highlight.3d=TRUE, type="h", xlab="x1",
               ylab="x2", zlab="y")
 
-# Transformando los datos -------------------------------------------------
+# Transformando los datos ------------------------------------------------------
 
 # Vamos a usar una transformacion al intervalo (0, 1) para
 # transformar todas las variables Y y X's simultaneamente.
-# La formula para transformar a (0, 1) es:
+# La formula para transformar a (0, 1) una variable x es:
 # (x - min(x)) / (max(x) - min(x))
-# y la formula inversa es: 
+# y la formula para la transformacion inversa es: 
 # x * (max(x) - min(x)) + min(x)
-
-# A usted le queda de tarea probar con una transformacion (-1, 1)
 
 maxs <- apply(datos, 2, max) 
 mins <- apply(datos, 2, min)
 
-scaled_datos <- scale(datos, center=mins, scale=maxs-mins) # a matrix
-scaled_datos <- as.data.frame(scaled_datos) # a data frame
+datos_transf <- scale(datos, center=mins, scale=maxs-mins) # a matrix
+datos_transf <- as.data.frame(datos_transf) # a data frame
+head(datos_transf)
 
-# Ajustado el modelo con neuralnet ---------------------------------------------
+# -------------------------------------------------------------------------
+# -------------------------- Usando neuralnet -----------------------------
+# -------------------------------------------------------------------------
 
 # Vamos a crear una red con 1 sola capa interna y 1 sola neurona
 # funcion de activacion logistica y otras caracteristica
 
 library(neuralnet)
 set.seed(1267)
-mod1 <- neuralnet(y ~ x1 + x2, data=scaled_datos,
+mod1 <- neuralnet(y ~ x1 + x2, data=datos_transf,
                   hidden=c(1),
                   rep=1,
                   algorithm="rprop+",
@@ -80,16 +81,14 @@ mod1$weights
 
 # Haciendo predicciones manuales para la observacion k-esima
 k <- 5
-scaled_datos[k, ] # primera linea
+datos_transf[k, ] # primera linea
 
-a <- mod1$weights[[1]][[1]][2, 1] * scaled_datos[k, "x1"] + 
-  mod1$weights[[1]][[1]][3, 1] * scaled_datos[k, "x2"] +
-  mod1$weights[[1]][[1]][1, 1]
-
+a <- 2.65789 * 0.2921465 - 2.52909 * 0.1630145 + 0.27469
 a
 
 # Como la red neuronal se creo con funcion de activacion logistica
-# yo debo usar la inversa de ella para obtener los resultados, como en glm binom
+# yo debo usar la inversa de esa funcion para obtener los resultados, 
+# como en glm binom.
 # f(x) = exp(x) / (1 + exp(x))
 # La funcion la tome de https://en.wikipedia.org/wiki/Logit
 
@@ -97,24 +96,24 @@ b <- exp(a) / (1 + exp(a))
 
 b
 
-b * mod1$weights[[1]][[2]][2, 1] + mod1$weights[[1]][[2]][1, 1]
+b * (-0.98859) + 1.04634
 
 # Haciendo las predicciones automaticamente
-predict(mod1, newdata=scaled_datos[k ,]) # igual al manual
+predict(mod1, newdata=datos_transf[k ,]) # igual al manual
 
 # Creando un vector con todas las predicciones usando los datos transf
-yhat1_transf <- predict(mod1, newdata=scaled_datos)
+yhat1_transf <- predict(mod1, newdata=datos_transf)
 yhat1_transf <- as.vector(yhat1_transf) # para ver como vector
 
 # Explorando las predicciones en el mundo transformado
 par(mfrow=c(1, 2), mai=c(1, 1, 1, 1) + 0.1)
 
-plot(x=scaled_datos$y, y=yhat1_transf, las=1, xlab="y_transf", 
+plot(x=datos_transf$y, y=yhat1_transf, las=1, xlab="y_transf", 
      main="Transformed world")
 abline(a=0, b=1, col="dodgerblue2", lwd=2)
 
 # Correlacion entre y and y_hat
-cor(x=scaled_datos$y, y=yhat1_transf)
+cor(x=datos_transf$y, y=yhat1_transf)
 
 # Explorando las predicciones en el mundo normal (no transf)
 # Debemos usar la transformada inversa
@@ -129,37 +128,6 @@ cor(x=datos$y, y=yhat1)
 
 # Tarea: saque al menos UNA conclusion de este ejemplo.
 
-# Ajustando el modelo con lm ---------------------------------------------------
-
-# Ahora vamos a ajustar el modelo usando lm solo para poder
-# comparar los resultados de nn con lm
-
-mod_lm <- lm(y ~ x1 + x2, data=datos)
-yhat_lm <- predict(mod_lm)
-
-# Calculando el MSE
-library(yardstick)
-mse_vec(truth=datos$y, estimate=yhat_lm)
-mse_vec(truth=datos$y, estimate=yhat1)
-
-# Cual modelo presenta el menor MSE?
-
-# Vamos a comparar graficamente las estimaciones con nn y lm
-par(mfrow=c(1, 2))
-
-plot(x=datos$y, y=yhat1, las=1, xlab="y", main="With nn")
-abline(a=0, b=1, col="darkgreen", lwd=2)
-
-plot(x=datos$y, y=yhat_lm, las=1, xlab="y", main="With lm")
-abline(a=0, b=1, col="orange", lwd=2)
-
-par(mfrow=c(1, 1))
-
-cor(x=datos$y, y=yhat1)
-cor(x=datos$y, y=yhat_lm)
-
-# Tarea: saque otra conclusion de este ejemplo.
-
 # ------------------------------------------------------------------------------
 # Como obtener predicciones de Y para nuevos casos usando nn???
 
@@ -172,14 +140,14 @@ cor(x=datos$y, y=yhat_lm)
 
 # Creamos un nuevo dataframe con los nuevos datos, como no 
 # conocemos los valores de Y (obvio) le colocamos NA en la columna Y.
-new_data <- data.frame(x1=c(-2, 0, 1),
-                       x2=c(4, 3, 1),
-                       y=NA)
+new_data <- data.frame(y=NA,
+                       x1=c(-2, 0, 1),
+                       x2=c(4, 3, 1))
 
 new_data
 
-# Transformar los datos con la informacion almacenada en el objeto trained_recipe
-new_data_transf <- bake(trained_recipe, new_data=new_data)
+new_data_transf <- scale(new_data, center=mins, scale=maxs-mins) # a matrix
+new_data_transf <- as.data.frame(new_data_transf) # a data frame
 
 # Comparar los datos transformar y transformados
 new_data
@@ -195,8 +163,7 @@ yhat_new <- yhat_new * (max(datos$y) - min(datos$y)) + min(datos$y)
 new_data$y <- yhat_new
 new_data
 
-
-# Variable importance -----------------------------------------------------
+# Importance variable -----------------------------------------------------
 
 # Para ver la importancia de las variables en la red usaremos el 
 # paquete NeuralNetTools y aplicamos al objeto mod1 que es de clase nn
@@ -208,15 +175,11 @@ olden(mod1)  # Olden et al (2002). Illuminating the ’black-box’
 
 # Tarea: Averiguar por que la altura de las barras son aprox 3 unidades
 
-# Para ver la importancia de las variables en el modelo de regresion
-summary(mod_lm)
-
-# Para crear una figura similar a la de arriba pero para lm usamos
-barplot(coef(mod_lm)[2:3], ylab="Importancia", las=1,
-        ylim=c(-3.5, 3.5), col=c("navy", "deepskyblue"))
-box()
-
 # Ajustado el modelo con nnet ---------------------------------------------
+
+# -------------------------------------------------------------------------
+# -------------------------- Usando nnet ----------------------------------
+# -------------------------------------------------------------------------
 
 # Vamos a crear una red con 1 sola capa interna y 1 sola neurona
 # funcion de activacion logistica
@@ -224,7 +187,7 @@ box()
 
 library(nnet)
 set.seed(2583)
-mod2 <- nnet(y ~ x1 + x2, data=scaled_datos,
+mod2 <- nnet(y ~ x1 + x2, data=datos_transf,
              size=1,
              softmax=FALSE,
              maxit=1000)
@@ -244,7 +207,7 @@ mod2$wts
 # Tarea: por que no son igualitos los pesos de ambas redes?
 
 # Creando un vector con todas las predicciones usando los datos transf
-yhat2_transf <- predict(mod2, newdata=scaled_datos)
+yhat2_transf <- predict(mod2, newdata=datos_transf)
 yhat2_transf <- as.vector(yhat2_transf) # para ver como vector
 yhat2 <- yhat2_transf * (max(datos$y) - min(datos$y)) + min(datos$y)
 

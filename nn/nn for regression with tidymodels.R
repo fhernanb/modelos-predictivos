@@ -19,7 +19,7 @@ gen_dat <- function(n) {
 }
 
 set.seed(1974)
-datos <- gen_dat(n=10000)
+datos <- gen_dat(n=100)
 head(datos)
 
 # Los datos simulados estan disponibles tambien en la url de abajo:
